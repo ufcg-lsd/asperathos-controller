@@ -28,6 +28,7 @@ from controller.plugins.controller.tendency.plugin import (
 from controller.plugins.controller.proportional_derivative.plugin import (
     ProportionalDerivativeController
 )
+from controller.plugins.controller.kubejobs.plugin import KubejobsController
 from controller.plugins.metric_source.builder import MetricSourceBuilder
 from controller.plugins.actuator.builder import ActuatorBuilder
 
@@ -43,7 +44,7 @@ class ControllerBuilder:
             actuator_type = plugin_info["policy"]["actuator"]
 
             metric_source = MetricSourceBuilder().get_metric_source(
-                                metric_source_type)
+                                metric_source_type, plugin_info)
 
             actuator = ActuatorBuilder().get_actuator(actuator_type)
 
@@ -68,6 +69,10 @@ class ControllerBuilder:
         elif name == "progress_tendency":
             return TendencyAwareProportionalController(app_id,
                                                           plugin_info)
+
+        elif name == "kubejobs":
+            return KubejobsController(app_id, plugin_info)
+
 
         else:
             # FIXME: exception type

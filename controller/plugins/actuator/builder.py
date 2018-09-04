@@ -16,8 +16,9 @@
 import ConfigParser
 
 from controller.utils.ssh import SSHUtils
-from controller.service import api
+import controller.service.api as api
 
+from controller.plugins.actuator.k8s_replicas.plugin import K8sActuator
 from controller.plugins.actuator.kvm.plugin import KVMActuator
 from controller.plugins.actuator.kvm_io.plugin import KVMIOActuator
 from controller.plugins.actuator.kvm_upv.plugin import KVMUPVActuator
@@ -33,7 +34,7 @@ from controller.utils.remote.kvm_tunnel import RemoteKVMTunnel
 
 
 class ActuatorBuilder:
-    def get_actuator(self, name):
+    def get_actuator(self, name, parameters={}):
         if name == "kvm":
             keypair = api.compute_nodes_keypair
 
@@ -71,7 +72,7 @@ class ActuatorBuilder:
                                              bs_reference)
 
             return KVMActuator(instance_locator, remote_kvm,
-                               authorization_data, default_io_cap)
+                               default_io_cap)
 
         elif name == "kvm_io":
             keypair = api.compute_nodes_keypair
@@ -116,6 +117,16 @@ class ActuatorBuilder:
             bs_reference = api.bs_reference
 
             return KVMUPVActuator(iops_reference, bs_reference)
+
+        elif name == "k8s_replicas":
+            try:
+                actuator = K8sActuator(parameters['app_id'], 
+                               api.k8s_manifest)
+            except Exception as e:
+                raise e
+            
+            return actuator
+
 
         elif name == "service":
             actuator_port = api.actuator_port

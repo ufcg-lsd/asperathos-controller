@@ -48,16 +48,14 @@ def setup_environment(data):
 
 
 def start_scaling(app_id, data):
-    if ('plugin' not in data or 'plugin_info' not in data):
+    if ('control_plugin' not in data or 'control_parameters' not in data):
         API_LOG.log("Missing parameters in request")
         raise ex.BadRequestException()
 
-    plugin = data["plugin"]
-    plugin_info = data['plugin_info']
-
+    plugin = data["control_plugin"]
+    
     controller = controller_builder.get_controller(plugin, app_id,
-                                                   plugin_info)
-
+                                                   data)
     executor = Thread(target=controller.start_application_scaling)
 
     executor.start()

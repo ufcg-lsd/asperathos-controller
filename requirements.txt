@@ -3,6 +3,8 @@ six
 werkzeug
 ConfigParser
 Flask
+kubernetes
+redis
 stevedore
 httplib2
 PrettyTable

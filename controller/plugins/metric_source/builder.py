@@ -16,6 +16,7 @@
 from controller.plugins.metric_source.monasca.plugin import MonascaMetricSource
 from controller.plugins.metric_source.nop.plugin import NopMetricSource
 from controller.plugins.metric_source.spark.plugin import SparkMetricSource
+from controller.plugins.metric_source.redis.plugin import RedisMetricSource
 from controller.plugins.metric_source.openstack_generic.plugin import (
     OpenstackGenericMetricSource
 )
@@ -28,12 +29,12 @@ class MetricSourceBuilder:
 
         elif name == "nop":
             return NopMetricSource()
-
         elif name == "spark":
             return SparkMetricSource(parameters)
-
         elif name == "openstack_generic":
             return OpenstackGenericMetricSource(parameters)
+        elif name == "redis":
+            return RedisMetricSource(parameters)
 
         else:
             # FIXME: exception type

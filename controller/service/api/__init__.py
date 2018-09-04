@@ -31,11 +31,11 @@ try:
 
     """ Validate if really exists a section to listed plugins """
     for plugin in actuator_plugins:
-        if plugin not in config.sections():
+        if plugin != '' and plugin not in config.sections():
             raise Exception("plugin '%s' section missing" % plugin)
 
     for plugin in metric_source_plugins:
-        if plugin not in config.sections():
+        if plugin != '' and plugin not in config.sections():
             raise Exception("plugin '%s' section missing" % plugin)
     
     if 'kvm_io' in actuator_plugins:
@@ -54,6 +54,12 @@ try:
         monasca_auth_url = config.get('monasca', 'auth_url')
         monasca_project_name = config.get('monasca', 'project_name')
         monasca_api_version = config.get('monasca', 'api_version')
+    
+    if 'k8s_replicas' in actuator_plugins:
+        k8s_manifest = config.get("k8s_replicas", "k8s_manifest")
+    
+    if 'service' in actuator_plugins:
+        actuator_port = config.get("service", "actuator_port")
 
 except Exception as e:
     print "Error: %s" % e.message
