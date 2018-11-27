@@ -43,6 +43,19 @@ Or using tox command:
 ```
 $ tox -e venv -- controller
 ```
+### Run Unit Tests
+
+In order to execute a unit test of a specific class run the following command:
+
+```
+$ pytest controller/test/unit/path/to/test/test_class.py
+```
+
+Or run all test cases using tox command:
+
+```
+$ tox
+```
 
 ## Controller REST API
 Endpoints are avaliable on [restapi-endpoints.md](https://github.com/bigsea-ufcg/bigsea-controller/tree/master/docs/restapi-endpoints.md) documentation.
