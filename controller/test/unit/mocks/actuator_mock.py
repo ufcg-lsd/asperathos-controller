@@ -13,13 +13,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
+"""
+Class that represents a mock of the Actuator object
+"""
 class ActuatorMock():
+    """ Constructor of the mock of a Actuator object
+    
+    Returns:
+        MockRedis: The simulation of a Actuator object
+    """
     def __init__(self):
-        pass
+        
+        self.replicas = 1
 
+    """
+    Simulate the behavior of the function get_number_of_replicas
+    of Actuator.
+    Return:
+        number_of_replicas(Integer)
+    """
     def get_number_of_replicas(self):
-        return 1
+        return self.replicas
 
+    """
+    Simulate the behavior of the function get_number_of_replicas
+    of Actuator.
+    """
     def adjust_resources(self, new_replicas):
-        pass
+        self.replicas = new_replicas
