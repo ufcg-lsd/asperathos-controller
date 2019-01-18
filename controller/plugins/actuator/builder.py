@@ -23,6 +23,7 @@ from controller.plugins.actuator.kvm.plugin import KVMActuator
 from controller.plugins.actuator.kvm_io.plugin import KVMIOActuator
 from controller.plugins.actuator.kvm_upv.plugin import KVMUPVActuator
 from controller.plugins.actuator.service.plugin import ServiceActuator
+from controller.plugins.actuator.external_api.plugin import ExternalApi
 from controller.plugins.actuator.nop.plugin import NopActuator
 
 from controller.utils.locator.instance import InstanceLocator
@@ -121,7 +122,7 @@ class ActuatorBuilder:
         elif name == "k8s_replicas":
             try:
                 actuator = K8sActuator(parameters['app_id'], 
-                               api.k8s_manifest)
+                               api.k8s_manifest)          
             except Exception as e:
                 raise e
             
@@ -137,6 +138,16 @@ class ActuatorBuilder:
                                                       actuator_port)
 
             return ServiceActuator(actuator_port, instance_locator)
+
+        elif name == "external_api":
+            actuator_metric = api.actuator_metric
+            try:
+                actuator = ExternalApi(parameters['app_id'], 
+                               actuator_metric, api.k8s_manifest)          
+            except Exception as e:
+                raise e
+
+            return actuator
 
         elif name == "nop":
             return NopActuator()

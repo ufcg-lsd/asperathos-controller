@@ -17,7 +17,6 @@ import ConfigParser
 import os
 import sys
 
-
 try:
     # Conf reading
     config = ConfigParser.RawConfigParser()
@@ -60,6 +59,10 @@ try:
     
     if 'service' in actuator_plugins:
         actuator_port = config.get("service", "actuator_port")
+
+    if 'external_api' in actuator_plugins:
+        actuator_metric = config.get('external_api', 'actuator_metric')
+        k8s_manifest = config.get("external_api", "k8s_manifest")
 
 except Exception as e:
     print "Error: %s" % e.message
