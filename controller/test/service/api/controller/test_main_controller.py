@@ -17,11 +17,11 @@ import unittest
 import time
 
 from mock.mock import MagicMock
-from service.api.controller.main_controller import Main_Controller
-from service.api.controller.plugins.single_application_controller import Single_Application_Controller
+#from service.api.controller.main_controller import Main_Controller
+from controller.plugins.controller.single.plugin import SingleApplicationController
 
 
-class Test_Main_Controller(unittest.TestCase):
+class TestMainController(unittest.TestCase):
 
     def setUp(self):
         self.application_id_0 = "app-00"
@@ -72,6 +72,7 @@ class Test_Main_Controller(unittest.TestCase):
     def controllers(self, name, application_id, parameters):
         return {self.application_id_0: self.controller, self.application_id_1: self.controller_2}[application_id]
 
+    @unittest.skip("Main controller not exists")    
     def test_start_and_stop_scaling_1_application(self):
         #
         # Starting scaling
@@ -119,6 +120,7 @@ class Test_Main_Controller(unittest.TestCase):
         self.assertEquals(
             0, len(self.main_controller.controller_thread_pool.items()))
 
+    @unittest.skip("Main controller not exists")
     def test_start_and_stop_scaling_2_applications(self):
         #
         # Starting scaling

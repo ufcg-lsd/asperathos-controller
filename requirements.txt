@@ -17,3 +17,4 @@ keystoneauth1
 pytz
 pytest
 tzlocal
+mock

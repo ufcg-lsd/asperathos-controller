@@ -14,19 +14,19 @@
 # limitations under the License.
 
 import unittest
-from service.api.actuator.plugins.remote_kvm import Remote_KVM
-from utils.ssh_utils import SSH_Utils
+from controller.utils.remote.kvm import RemoteKVM
+from controller.utils.ssh import SSHUtils
 from mock.mock import MagicMock
 
 
-class Test_Remote_KVM(unittest.TestCase):
+class TestRemoteKVM(unittest.TestCase):
 
     def setUp(self):
-        self.ssh_utils = SSH_Utils({})
+        self.ssh_utils = SSHUtils({})
         self.compute_nodes_key = "key"
         self.iops_reference = 50
         self.bs_reference = 10000000
-        self.remote_kvm = Remote_KVM(self.ssh_utils, self.compute_nodes_key,
+        self.remote_kvm = RemoteKVM(self.ssh_utils, self.compute_nodes_key,
                                      self.iops_reference, self.bs_reference)
         self.cap = 56
         self.host_ip = "vm-ip"
