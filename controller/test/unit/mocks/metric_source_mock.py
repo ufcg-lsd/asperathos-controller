@@ -13,12 +13,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from datetime import datetime
 
+"""
+Class that represents a mock of the MetricSource object
+"""
 class MetricSourceMock():
+    """ Constructor of the mock of a MetricSource object
+    
+    Returns:
+        MockRedis: The simulation of a MetricSource object
+    """
     def __init__(self, timestamp, error):
-        self.timestamp = timestamp
+        self.timestamp = datetime.strptime(
+                    timestamp,'%Y-%m-%dT%H:%M:%S.%fZ')
+
         self.error = error
 
+    """
+    Simulate the behavior of the function get_most_recent_value
+    of MetricSource.
+    Return:
+        number_of_replicas(Integer)
+    """
     def get_most_recent_value(self, application_id):
         return (self.timestamp, self.error)
-    

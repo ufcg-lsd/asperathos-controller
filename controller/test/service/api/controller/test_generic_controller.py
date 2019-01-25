@@ -18,10 +18,10 @@ import threading
 import time
 import unittest
 
-from service.api.controller.plugins.generic.controller import Generic_Controller
+from controller.plugins.controller.generic.plugin import GenericController
 
 
-class Test_Generic_Controller(unittest.TestCase):
+class TestGenericController(unittest.TestCase):
 
     def setUp(self):
         self.app_id_0 = "app-00"
@@ -60,7 +60,7 @@ class Test_Generic_Controller(unittest.TestCase):
                            "bigsea_username": self.bigsea_username,
                            "bigsea_password": self.bigsea_password}
 
-        self.controller = Generic_Controller(self.app_id_0, self.parameters)
+        self.controller = GenericController(self.app_id_0, self.scaling_parameters)
 
     def test_start_and_stop_scaling(self):
         self.controller.alarm.check_application_state = MagicMock(

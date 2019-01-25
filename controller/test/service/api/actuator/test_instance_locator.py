@@ -14,13 +14,13 @@
 # limitations under the License.
 
 import unittest
-from service.api.actuator.plugins.instance_locator import Instance_Locator
-from utils.ssh_utils import SSH_Utils
+from controller.utils.locator.instance import InstanceLocator
+from controller.utils.ssh import SSHUtils
 from mock.mock import MagicMock
-from service.exceptions.kvm_exceptions import InstanceNotFoundException
+from controller.exceptions.kvm import InstanceNotFoundException
 
 
-class Test_Instance_Locator(unittest.TestCase):
+class TestInstanceLocator(unittest.TestCase):
 
     def setUp(self):
         self.compute_1 = "compute1"
@@ -28,10 +28,10 @@ class Test_Instance_Locator(unittest.TestCase):
         self.user = "root"
         self.vm_id = "vm-id"
 
-        self.ssh_utils = SSH_Utils({})
+        self.ssh_utils = SSHUtils({})
         self.compute_nodes = [self.compute_1, self.compute_2]
         self.compute_nodes_key = "key"
-        self.instance_locator = Instance_Locator(
+        self.instance_locator = InstanceLocator(
             self.ssh_utils, self.compute_nodes, self.compute_nodes_key)
 
     def tearDown(self):

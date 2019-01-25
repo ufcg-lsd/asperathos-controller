@@ -18,10 +18,10 @@ import time
 import unittest
 
 from mock.mock import MagicMock
-from service.api.controller.plugins.single_application_controller import Single_Application_Controller
+from controller.plugins.controller.single.plugin import SingleApplicationController
 
 
-class Test_Single_Application_Controller(unittest.TestCase):
+class TestSingleApplicationController(unittest.TestCase):
 
     def setUp(self):
         self.app_id_0 = "app-00"
@@ -56,12 +56,12 @@ class Test_Single_Application_Controller(unittest.TestCase):
         self.scaling_parameters["actuator"] = self.actuator
         self.scaling_parameters["metric_source"] = self.metric_source
 
-        self.parameters = {"scaling_parameters": self.scaling_parameters,
-                           "bigsea_username": self.bigsea_username,
-                           "bigsea_password": self.bigsea_password}
+        # self.parameters = {"scaling_parameters": self.scaling_parameters,
+        #                    "bigsea_username": self.bigsea_username,
+        #                    "bigsea_password": self.bigsea_password}
 
-        self.controller = Single_Application_Controller(
-            self.app_id_0, self.parameters)
+        self.controller = SingleApplicationController(
+            self.app_id_0, self.scaling_parameters)
 
     def test_start_and_stop_scaling(self):
         self.controller.alarm.check_application_state = MagicMock(

@@ -18,12 +18,11 @@ from mock.mock import MagicMock
 import time
 import unittest
 
-from service.api.controller.plugins.basic.controller import Basic_Controller
-from service.api.controller.metric_source_builder import Metric_Source_Builder
-from service.api.actuator.actuator_builder import Actuator_Builder
+from controller.plugins.controller.basic.plugin import BasicController
+from controller.plugins.metric_source.builder import MetricSourceBuilder
+from controller.plugins.actuator.builder import ActuatorBuilder
 
-
-class Test_Basic_Controller(unittest.TestCase):
+class TestBasicController(unittest.TestCase):
 
     CHECK_INTERVAL = 1
 
@@ -51,10 +50,10 @@ class Test_Basic_Controller(unittest.TestCase):
                       "bigsea_username": self.bigsea_username,
                       "bigsea_password": self.bigsea_password}
 
-        metric_source = Metric_Source_Builder().get_metric_source("nop", {})
-        actuator = Actuator_Builder().get_actuator("nop", parameters)
+        metric_source = MetricSourceBuilder().get_metric_source("nop", {})
+        actuator = ActuatorBuilder().get_actuator("nop", parameters)
 
-        self.controller = Basic_Controller(metric_source, actuator, parameters)
+        self.controller = BasicController(metric_source, actuator, scaling_parameters)
         self.application_id_1 = "app-01"
         self.application_id_2 = "app-02"
         self.instance_1 = "instance-1"
