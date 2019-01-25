@@ -31,8 +31,6 @@ class SingleApplicationController(Controller):
         self.logger = Log("single.controller.log", "controller.log")
         configure_logging()
 
-        plugin_info = plugin_info["plugin_info"]
-
         self.application_id = application_id
         self.instances = plugin_info["instances"]
         self.check_interval = plugin_info["check_interval"]

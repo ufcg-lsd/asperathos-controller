@@ -17,15 +17,15 @@ import datetime
 import unittest
 
 from mock.mock import MagicMock
-from service.api.actuator.plugins.instance_locator import Instance_Locator
-from service.api.actuator.plugins.kvm_actuator import KVM_Actuator
-from service.api.actuator.plugins.remote_kvm import Remote_KVM
-from service.api.controller.metric_source_builder import Metric_Source_Builder
-from service.api.controller.plugins.tendency.alarm import Tendency_Aware_Proportional_Alarm
-from utils.ssh_utils import SSH_Utils
+from controller.plugins.metric_source.builder import MetricSourceBuilder
+from controller.utils.locator.instance import InstanceLocator
+from controller.utils.ssh import SSHUtils
+from controller.utils.remote.kvm import RemoteKVM
+from controller.plugins.actuator.kvm.plugin import KVMActuator
+from controller.plugins.controller.tendency.alarm import TendencyAwareProportionalAlarm
 
 
-class Test_Tendency_Aware_Proportional_Alarm(unittest.TestCase):
+class TestTendencyAwareProportionalAlarm(unittest.TestCase):
 
     def setUp(self):
         self.application_id_0 = "app-00"
@@ -56,24 +56,24 @@ class Test_Tendency_Aware_Proportional_Alarm(unittest.TestCase):
         self.actuation_size = 25
         self.default_io_cap = 67
 
-        self.bigsea_username = "username"
-        self.bigsea_password = "password"
-        self.authorization_url = "authorization_url"
-        self.authorization_data = dict(authorization_url=self.authorization_url,
-                                       bigsea_username=self.bigsea_username,
-                                       bigsea_password=self.bigsea_password)
+        # self.bigsea_username = "username"
+        # self.bigsea_password = "password"
+        # self.authorization_url = "authorization_url"
+        # self.authorization_data = dict(authorization_url=self.authorization_url,
+        #                                bigsea_username=self.bigsea_username,
+        #                                bigsea_password=self.bigsea_password)
 
         compute_nodes = []
         compute_nodes_key = "key"
         self.instances = [self.instance_name_1, self.instance_name_2]
-        self.metric_source = Metric_Source_Builder().get_metric_source("nop", {})
-        self.instance_locator = Instance_Locator(
-            SSH_Utils({}), compute_nodes, compute_nodes_key)
-        self.remote_kvm = Remote_KVM(SSH_Utils({}), compute_nodes_key)
-        self.actuator = KVM_Actuator(self.instance_locator, self.remote_kvm, self.authorization_data,
+        self.metric_source = MetricSourceBuilder().get_metric_source("nop", {})
+        self.instance_locator = InstanceLocator(
+            SSHUtils({}), compute_nodes, compute_nodes_key)
+        self.remote_kvm = RemoteKVM(SSHUtils({}), compute_nodes_key)
+        self.actuator = KVMActuator(self.instance_locator, self.remote_kvm, #self.authorization_data,
                                      self.default_io_cap)
 
-        self.alarm = Tendency_Aware_Proportional_Alarm(self.actuator, self.metric_source,
+        self.alarm = TendencyAwareProportionalAlarm(self.actuator, self.metric_source,
                                                        self.trigger_down, self.trigger_up,
                                                        self.min_cap, self.max_cap, self.actuation_size,
                                                        self.metric_round)

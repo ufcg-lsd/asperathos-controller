@@ -145,7 +145,7 @@ class ProportionalAlarm:
 
     def _get_progress_error(self, application_id):
         progress_error_measurement = self.metric_source.get_most_recent_value(
-                                         Proportional_Alarm.ERROR_METRIC_NAME,
+                                         ProportionalAlarm.ERROR_METRIC_NAME,
                                          {"application_id": application_id})
 
         progress_error_timestamp = progress_error_measurement[0]
