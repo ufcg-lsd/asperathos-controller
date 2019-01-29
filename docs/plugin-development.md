@@ -8,9 +8,55 @@ The controller is implemented following a **plugin architecture**, providing fle
 * The **Metric Source** plugin is responsible for getting application metrics from a metric source, such as Monasca, and returning them to the Controller.
 
 ## Steps
-1. In *controller/plugins* folder, exists three directories (*controller*, *actuator* and *metric_source*). Choose what kind of plugin you will develop and create a new folder under one of these directories with the desired plugin name and add *__init__.py*. In this tutorial, we will use MyNewControllerPlugin to represent a new controller plugin.
+
+1. In *controller.cfg* add the plugin to the list of desired plugins:
+
+### Example:
+
+```
+[general]
+host = 0.0.0.0
+port = 6000
+actuator_plugins = my_new_controller_plugin
+metric_source_plugins = metric_source
+
+[metric_source]
+metric_source_endpoint =
+username = 
+password = 
+project_name =
+auth_url =
+api_version =
+
+[my_new_controller_plugin]
+var1 =
+var2 =
+var3 = 
+```
+In this tutorial, we will use MyNewControllerPlugin to represent a new controller plugin.
+
+2. In *controller/plugins* folder, exists three directories (*controller*, *actuator* and *metric_source*). Choose what kind of plugin you will develop and create a new folder under one of these directories with the desired plugin name and add *__init__.py*.
+
+3. Create a new if statement condition in the file *controller/service/api/__init__.py* that will recognize if the new plugin added is informed in the configuration file (*controller.cfg*). If this condition is true, then the necessary variables to execute the plugin needs to be informed in the *controller.cfg* file and computed in the *controller/service/api/__init__.py*.
+
+### Example:
+
+```
+import ConfigParser
+
+try:
+
+[...]
+
+if 'my_new_controller_plugin' in plugins:
+    var1 = config.get('my_new_controller_plugin', 'var1')
+    var2 = config.get('my_new_controller_plugin', 'var2')
+    var3 = config.get('my_new_controller_plugin', 'var3')
+
+[...]
+```
  
-2. Write a new python class under *controller/plugins/mynewcontrollerplugin*
+4. Write a new python class under *controller/plugins/mynewcontrollerplugin*
  
 It must implement the methods *__init__*, *start_application_scaling* and *stop_application_scaling*.
 
@@ -40,20 +86,19 @@ class MyNewControllerPlugin:
         pass
 ```
 
-2. Add the class to controller project into the plugins directory.
+5. Add the class to controller project into the plugins directory.
 
-3. Edit ControllerBuilder
+6. Edit ControllerBuilder (*controller/plugins/controller/builder.py*)
 - Add a new condition to get_controller. Instantiate the plugin using the new condition.
 
 ### Example:
 ```
 ...
-elif name == "mycontroller":
+elif name == "my_new_controller_plugin":
             # prepare parameters
             return MyNewControllerPlugin(application_id, parameters)
 ...
 ```
-
 
 The string used in the condition must be passed in the request to start scaling as the value to “plugin” parameter.
 
