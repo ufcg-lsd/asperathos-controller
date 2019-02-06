@@ -1,4 +1,4 @@
-# Copyright (c) 2017 LSD - UFCG.
+# Copyright (c) 2019 LSD - UFCG.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,38 +13,43 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import requests
+import os
+
 import datetime
+import requests
 import time
 
 from controller.utils.logger import ScalingLog
+from controller.service import api
 
-# This class contains the logic used to adjust the amount of resources allocated to applications
+"""
+Class that implements the alarm for the Vertical plugin
+"""
 
-
-class KubeJobs:
+class Vertical:
 
     ERROR_METRIC_NAME = "application-progress.error"
 
-    def __init__(self, actuator, metric_source, trigger_down, 
-                 trigger_up, min_cap, max_cap, actuation_size, application_id):
+    def __init__(self, actuator, metric_source, actuator_metric, trigger_down, 
+                 trigger_up, min_quota, max_quota, application_id):
         # TODO: Check parameters
         self.metric_source = metric_source
         self.actuator = actuator
+        self.actuator_metric = actuator_metric
         self.trigger_down = trigger_down
         self.trigger_up = trigger_up
-        self.min_cap = min_cap
-        self.max_cap = max_cap
-        self.actuation_size = actuation_size
+        self.min_quota = min_quota
+        self.max_quota = max_quota
         self.application_id = application_id
 
-        self.logger = ScalingLog("%s.generic.alarm.log" % (application_id), "controller.log",
+        self.logger = ScalingLog("%s.vertical.alarm.log" % (application_id), "controller.log",
                                  application_id)
         self.cap_logger = ScalingLog("%s.cap.log" % (
             application_id), "cap.log", application_id)
 
         self.last_progress_error_timestamp = datetime.datetime.strptime("0001-01-01T00:00:00.0Z",
                                                                         '%Y-%m-%dT%H:%M:%S.%fZ')
+
         self.last_action = ""
         self.cap = -1
 
@@ -86,66 +91,83 @@ class KubeJobs:
             self.logger.log(str(e))
 
             raise e
-            
+
     def _scale_down(self, progress_error):
+        """Scales down the specific resource using an external API.
+        
+        Arguments:
+            progress_error {float} -- progress error of the job
         """
-            Checks if it is necessary to scale down, according to
-            the progress_error. If it is, calculates the new CPU cap
-            value and tries to modify the cap of the vms.
-        """
+
 
         # If the error is positive and its absolute value is too high, scale down
         if progress_error > 0 and progress_error >= self.trigger_down:
-            self.logger.log("Scaling down")
-            self.last_action = "Getting allocated resources"
+            if self.actuator_metric == 'cpu':
+                self.logger.log("Scaling down")
+                self.last_action = "Getting allocated resources"
 
-            # Get current CPU cap
-            replicas = self.actuator.get_number_of_replicas()
-            new_replicas = max(replicas - self.actuation_size, self.min_cap)
-            # new_cap = max(cap - self.actuation_size, self.min_cap)
-
-            self.logger.log("Scaling from %d to %d" % (replicas, new_replicas))
-            self.last_action = "Scaling from %d to %d" % (replicas, new_replicas)
-
-            # Currently, we use the same cap for all the vms
-            # cap_instances = {instance: new_cap for instance in instances}
-
-            # Set the new cap
-            self.actuator.adjust_resources(new_replicas)
+                self.logger.log("Scaling %s quota from %d / %d" % (self.actuator_metric, self.max_quota, self.max_quota))
+                print("Scaling %s from %d / %d" % (self.actuator_metric, self.max_quota, self.max_quota))
+                self.set_cpu_quota(self.max_quota)
 
     def _scale_up(self, progress_error):
-        """
-            Checks if it is necessary to scale up, according to
-            the progress_error. If it is, calculates the new CPU cap
-            value and tries to modify the cap of the vms.
+        """Scales up the specific resource using an external API.
+        
+        Arguments:
+            progress_error {float} -- progress error of the job
         """
 
         # If the error is negative and its absolute value is too high, scale up
         if progress_error < 0 and abs(progress_error) >= self.trigger_up:
-            self.logger.log("Scaling up")
-            self.last_action = "Getting allocated resources"
+            if self.actuator_metric == 'cpu':
+                self.logger.log("Scaling up")
+                self.last_action = "Getting allocated resources"
 
-            # Get current number of replicas
-            replicas = self.actuator.get_number_of_replicas()
-            new_replicas = min(replicas + self.actuation_size, self.max_cap)
-
-            self.logger.log("Scaling from %d to %d" % (replicas, new_replicas))
-            self.last_action = "Scaling from %d to %d" % (replicas, new_replicas)
-
-            # Currently, we use the same cap for all the vms
-            # cap_instances = {instance: new_cap for instance in instances}
-
-            # Set the new cap
-            self.actuator.adjust_resources(new_replicas)
+                self.logger.log("Scaling from %d / %d" % (self.min_quota, self.max_quota))
+                print("Scaling from %d / %d" % (self.min_quota, self.max_quota))
+                self.set_cpu_quota(self.min_quota)
 
     def _get_progress_error(self, application_id):
+        """Gets the progress error of the job
+        
+        Arguments:
+            application_id {string} -- The application identifier
+        
+        Returns:
+            [tuple] -- Returns a tuple containing the progress error timestamp and 
+            the current value of the progress error
+        """
+
         progress_error_measurement = self.metric_source.get_most_recent_value(application_id)
         progress_error_timestamp = progress_error_measurement[0]
         progress_error = progress_error_measurement[1]
         return progress_error_timestamp, progress_error
 
     def _check_measurements_are_new(self, progress_error_timestamp):
+        """Check if the currently measurements where already computed.
+        
+        Arguments:
+            progress_error_timestamp {string} -- Timestamp of the current progress error
+        
+        Returns:
+            [boolean] -- 'true' if the measurements are new, 'false' otherwise
+        """
+
         return self.last_progress_error_timestamp < progress_error_timestamp
 
     def status(self):
         return self.last_action
+
+    def set_cpu_quota(self, new_cpu_quota):
+        """Sets the CPU quota of the physical machine using a external API
+        
+        Arguments:
+            new_cpu_quota {int} -- The new value for the CPU quota of the machine
+        """
+        try:
+            r = requests.post('http://%s:5000' % (self.actuator.api_address), 
+                data='{\"cpu_quota\":\"' + str(new_cpu_quota) + '\"}')
+        except Exception as ex:
+            print("Error while modifying cpu quota")
+            print ex.message
+            raise

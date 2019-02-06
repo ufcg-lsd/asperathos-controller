@@ -1,4 +1,4 @@
-# Copyright (c) 2017 LSD - UFCG.
+# Copyright (c) 2019 LSD - UFCG.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,30 +19,29 @@ import time
 from controller.plugins.actuator.builder import ActuatorBuilder
 from controller.plugins.controller.base import Controller
 from controller.plugins.metric_source.builder import MetricSourceBuilder
-from controller.plugins.controller.kubejobs.alarm import KubeJobs
+from controller.plugins.controller.vertical.alarm import Vertical
 from controller.utils.logger import ScalingLog
 
-# This class dictates the pace of the scaling process. It controls when Generic_Alarm
-# is called to check application state and when is necessary to wait.
-
-
-class KubejobsController(Controller):
+class VerticalController(Controller):
 
     def __init__(self, application_id, parameters):
         self.logger = ScalingLog(
-            "diff.controller.log", "controller.log", application_id)
+                "diff.controller.log", "controller.log", application_id)
         scaling_parameters = parameters["control_parameters"]
         self.application_id = application_id
         parameters.update({"app_id": application_id})
-        # read scaling parameters
+
+        # Read scaling parameters
         self.check_interval = scaling_parameters["check_interval"]
+        self.actuator_metric = scaling_parameters["actuator_metric"]
         self.trigger_down = scaling_parameters["trigger_down"]
         self.trigger_up = scaling_parameters["trigger_up"]
-        self.min_cap = scaling_parameters["min_rep"]
-        self.max_cap = scaling_parameters["max_rep"]
-        self.actuation_size = scaling_parameters["actuation_size"]
+        self.min_quota = scaling_parameters["min_quota"]
+        self.max_quota = scaling_parameters["max_quota"]
+
         # The actuator plugin name
         self.actuator_type = scaling_parameters["actuator"]
+
         # The metric source plugin name
         self.metric_source_type = scaling_parameters["metric_source"]
 
@@ -53,14 +52,16 @@ class KubejobsController(Controller):
         # Gets a new metric source plugin using the given name
         metric_source = MetricSourceBuilder().get_metric_source(
             self.metric_source_type, parameters)
+            
+        # TODO: Add new actuator as option in the ActuatorBuilder
         # Gets a new actuator plugin using the given name
         actuator = ActuatorBuilder().get_actuator(self.actuator_type, 
                                                   parameters=parameters)
+
         # The alarm here is responsible for deciding whether to scale up or down, or even do nothing
-        self.alarm = KubeJobs(actuator, metric_source, 
-                            self.trigger_down, self.trigger_up,
-                            self.min_cap, self.max_cap, self.actuation_size,
-                            application_id)
+        self.alarm = Vertical(actuator, metric_source, self.actuator_metric, self.trigger_down, 
+                              self.trigger_up, self.min_quota, self.max_quota, 
+                              self.application_id)
 
     def start_application_scaling(self):
         run = True

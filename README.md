@@ -8,7 +8,7 @@ The **Controller** is responsible for adjusting the amount of resources allocate
 
 **EUBra-BIGSEA** is committed to making a significant contribution to the **cooperation between Europe and Brazil** in the *area of advanced cloud services for Big Data applications*. See more about in [EUBra-BIGSEA website](http://www.eubra-bigsea.eu/).
 
-To more info about **Controller** and how does it works in **BIGSEA Asperathos environment**, see [details.md](https://github.com/bigsea-ufcg/bigsea-controller/tree/master/docs/details.md) and [asperathos-workflow.md](https://github.com/bigsea-ufcg/bigsea-controller/tree/master/docs/asperathos-workflow.md).
+To more info about **Controller** and how does it works in **BIGSEA Asperathos environment**, see [details.md](docs/details.md) and [asperathos-workflow.md](docs/asperathos-workflow.md).
 
 ## How does it works?
 The controller is implemented following a **plugin architecture**, providing flexibility to add or remove plugins when necessary. It works with usage of three types of plugins: **Actuator**, **Controller** and **Metric Source**.
@@ -17,21 +17,21 @@ The controller is implemented following a **plugin architecture**, providing fle
 * The **Metric Source** plugin is responsible for getting application metrics from a metric source, such as Monasca, and returning them to the Controller.
 
 ## How to develop a plugin?
-See [plugin-development.md](https://github.com/bigsea-ufcg/bigsea-controller/tree/master/docs/plugin-development.md).
+See [plugin-development.md](docs/plugin-development.md).
 
 ## Requirements
 * Python 2.7 or Python 3.5
 * Linux packages: python-dev and python-pip
 * Python packages: setuptools, tox and flake8
 
-To **apt** distros, you can use [pre-install.sh](https://github.com/bigsea-ufcg/bigsea-controller/tree/master/pre-install.sh) to install the requirements.
+To **apt** distros, you can use [pre-install.sh](pre-install.sh) to install the requirements.
 
 ## Install
-Clone the [Controller repository](https://github.com/bigsea-ufcg/bigsea-controller.git) in your machine.
+Clone the [Controller repository](https://github.com/ufcg-lsd/asperathos-controller) in your machine.
 
 ### Configuration
 A configuration file is required to run the Controller. **Edit and fill your controller.cfg in the root of Controller directory.** Make sure you have fill up all fields before run.
-You can find a template in [config-example.md](https://github.com/bigsea-ufcg/bigsea-controller/tree/master/docs/config-example.md). 
+You can find a template in [config-example.md](docs/config-example.md). 
 
 ### Run
 In the Controller root directory, start the service using run script:
@@ -43,33 +43,24 @@ Or using tox command:
 ```
 $ tox -e venv -- controller
 ```
-### Run Unit Tests
-
-In order to execute a unit test of a specific class run the following command:
-
-```
-$ pytest controller/test/unit/path/to/test/test_class.py
-```
-
-Or run all test cases using tox command:
-
-```
-$ tox
-```
 
 ## Controller REST API
-Endpoints are avaliable on [restapi-endpoints.md](https://github.com/bigsea-ufcg/bigsea-controller/tree/master/docs/restapi-endpoints.md) documentation.
+Endpoints are avaliable on [restapi-endpoints.md](docs/restapi-endpoints.md) documentation.
 
 ## Avaliable plugins
 ### Controller
-* [Progress error](https://github.com/bigsea-ufcg/bigsea-controller/blob/master/docs/plugins/controller/progress-error.md)
-* [Proportional](https://github.com/bigsea-ufcg/bigsea-controller/tree/master/docs/plugins/controller/proportional-controller.md)
-* [Proportional derivative](https://github.com/bigsea-ufcg/bigsea-controller/tree/master/docs/plugins/controller/proportional-derivative-controller.md)
-* [Proportional integrative derivative](https://github.com/bigsea-ufcg/bigsea-controller/tree/master/docs/plugins/controller/proportional-derivative-controller.md)
+* [Progress error](docs/plugins/controller/progress-error.md)
+* [Proportional](docs/plugins/controller/proportional-controller.md)
+* [Proportional derivative](docs/plugins/controller/proportional-derivative-controller.md)
+* [Proportional integrative derivative](docs/plugins/controller/proportional-derivative-controller.md)
+* [Kube Jobs](docs/plugins/controller/kubejobs.md)
+* [Vertical](docs/plugins/controller/vertical-controller.md)
 
 ### Actuator
-* [KVM](https://github.com/bigsea-ufcg/bigsea-controller/blob/master/docs/plugins/actuator/kvm-actuator.md)
-* [KVM I/O](https://github.com/bigsea-ufcg/bigsea-controller/blob/master/docs/plugins/actuator/kvm-io-actuator.md)
+* [KVM](docs/plugins/actuator/kvm-actuator.md)
+* [KVM I/O](docs/plugins/actuator/kvm-io-actuator.md)
+* [K8s Replicas](docs/plugins/actuator/k8s-replicas.md)
+* [External API](docs/plugins/actuator/external-api.md)
 
 ### Metric source
-* [Monasca](https://github.com/bigsea-ufcg/bigsea-controller/tree/master/docs/plugins/metric_source/monasca-metric-source.md)
+* [Monasca](docs/plugins/metric_source/monasca-metric-source.md)

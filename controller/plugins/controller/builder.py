@@ -29,6 +29,7 @@ from controller.plugins.controller.proportional_derivative.plugin import (
     ProportionalDerivativeController
 )
 from controller.plugins.controller.kubejobs.plugin import KubejobsController
+from controller.plugins.controller.vertical.plugin import VerticalController
 from controller.plugins.metric_source.builder import MetricSourceBuilder
 from controller.plugins.actuator.builder import ActuatorBuilder
 
@@ -73,6 +74,8 @@ class ControllerBuilder:
         elif name == "kubejobs":
             return KubejobsController(app_id, plugin_info)
 
+        elif name == "vertical":
+            return VerticalController(app_id, plugin_info)
 
         else:
             # FIXME: exception type
