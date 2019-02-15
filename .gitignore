@@ -11,3 +11,4 @@
 *.swp
 .*.swp
 .*.cfg
+data/conf
