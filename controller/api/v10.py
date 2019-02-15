@@ -61,3 +61,49 @@ def stop_scaling(app_id, data):
 @rest.get('/scaling')
 def controller_status():
     return u.render(api.controller_status())
+
+""" Add a new cluster reference in the Asperathos section.
+
+    Normal response codes: 202
+    Error response codes: 400, 401
+"""
+@rest.post('/cluster')
+def add_cluster(data):
+    return u.render(api.add_cluster(data)) 
+
+""" Delete a cluster reference in the Asperathos section.
+
+    Normal response codes: 202
+    Error response codes: 400, 401
+"""
+@rest.post('/cluster/<cluster_name>/delete')
+def delete_cluster(cluster_name, data):
+    return u.render(api.delete_cluster(cluster_name, data)) 
+
+""" Start to use the informed cluster as active cluster
+    in the Asperathos section.
+                                                                              
+    Normal response codes: 200
+    Error response codes: 400
+"""
+@rest.post('/cluster/<cluster_name>')
+def active_cluster(cluster_name, data):
+    return u.render(api.active_cluster(cluster_name, data))
+
+""" Add a certificate to a cluster reference in the Asperathos section.
+
+    Normal response codes: 202
+    Error response codes: 400, 401
+"""
+@rest.post('/cluster/<cluster_name>/certificate')
+def add_certificate(cluster_name, data):
+    return u.render(api.add_certificate(cluster_name, data)) 
+
+""" Delete a certificate to a cluster reference in the Asperathos section.
+
+    Normal response codes: 202
+    Error response codes: 400, 401
+"""
+@rest.post('/cluster/<cluster_name>/certificate/<certificate_name>/delete')
+def delete_certificate(cluster_name, certificate_name, data):
+    return u.render(api.delete_certificate(cluster_name, certificate_name, data)) 

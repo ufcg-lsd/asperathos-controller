@@ -55,14 +55,29 @@ try:
         monasca_api_version = config.get('monasca', 'api_version')
     
     if 'k8s_replicas' in actuator_plugins:
-        k8s_manifest = config.get("k8s_replicas", "k8s_manifest")
+
+        # Setting default value
+        k8s_manifest = "./data/conf"
+
+        # If explicitly stated in the cfg file, overwrite the variable
+        if(config.has_section('k8s_replicas')):
+            if(config.has_option('k8s_replicas', 'k8s_manifest')):
+                k8s_manifest = config.get("k8s_replicas", "k8s_manifest")
     
     if 'service' in actuator_plugins:
         actuator_port = config.get("service", "actuator_port")
 
     if 'external_api' in actuator_plugins:
+
+        # Setting default value
+        k8s_manifest = "./data/conf"
+
+        # If explicitly stated in the cfg file, overwrite the variable
+        if(config.has_section('external_api')):
+            if(config.has_option('external_api', 'k8s_manifest')):
+                k8s_manifest = config.get("external_api", "k8s_manifest")
+
         actuator_metric = config.get('external_api', 'actuator_metric')
-        k8s_manifest = config.get("external_api", "k8s_manifest")
 
 except Exception as e:
     print "Error: %s" % e.message
