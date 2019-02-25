@@ -23,7 +23,7 @@ class K8sActuator:
 
     def __init__(self, app_id, k8s_manifest):
         # load config from default location (~/.kube/config)
-        config.load_kube_config()
+        config.load_kube_config(k8s_manifest)
         # api instance
         self.k8s_api = client.BatchV1Api()
         self.app_id = app_id
