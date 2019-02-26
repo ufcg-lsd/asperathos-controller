@@ -13,10 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-import filecmp
-import shutil
-
 from flask import request
 from controller.plugins.actuator.builder import ActuatorBuilder
 from controller.plugins.controller.builder import ControllerBuilder
