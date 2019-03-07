@@ -64,7 +64,7 @@ class KubejobsController(Controller):
 
     def start_application_scaling(self):
         run = True
-        print "Start to control resources"
+        self.logger.log("Start to control resources")
 
         while run:
             self.logger.log("Monitoring application: %s" %
