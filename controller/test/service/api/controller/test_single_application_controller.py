@@ -18,7 +18,8 @@ import time
 import unittest
 
 from mock.mock import MagicMock
-from controller.plugins.controller.single.plugin import SingleApplicationController
+from controller.plugins.controller.single.plugin\
+     import SingleApplicationController
 
 
 class TestSingleApplicationController(unittest.TestCase):

@@ -20,6 +20,8 @@ import time
 
 """ This class contains the logic used to adjust the amount of resources
     allocated to applications """
+
+
 class GenericAlarm:
     ERROR_METRIC_NAME = "application-progress.error"
 
@@ -48,8 +50,8 @@ class GenericAlarm:
 
         self.last_error = ""
         self.last_error_timestamp = datetime.datetime.strptime(
-                                        "0001-01-01T00:00:00.0Z",
-                                        '%Y-%m-%dT%H:%M:%S.%fZ')
+            "0001-01-01T00:00:00.0Z",
+            '%Y-%m-%dT%H:%M:%S.%fZ')
         self.last_action = ""
         self.cap = -1
 
@@ -154,8 +156,8 @@ class GenericAlarm:
 
     def _get_error(self, application_id):
         error_measurement = self.metric_source.get_most_recent_value(
-                                GenericAlarm.ERROR_METRIC_NAME,
-                                {"application_id": application_id})
+            GenericAlarm.ERROR_METRIC_NAME,
+            {"application_id": application_id})
 
         error_timestamp = error_measurement[0]
         error = error_measurement[1]

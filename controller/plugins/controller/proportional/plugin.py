@@ -42,7 +42,8 @@ class ProportionalController(Controller):
         self.metric_source_type = plugin_info["metric_source"]
         self.heuristic_options = plugin_info["heuristic_options"]
 
-        # We use a lock here to prevent race conditions when stop the controller
+        # We use a lock here to prevent race conditions when stop the
+        # controller
         self.running = True
         self.running_lock = threading.RLock()
 

@@ -17,8 +17,7 @@ import unittest
 import time
 
 from mock.mock import MagicMock
-#from service.api.controller.main_controller import Main_Controller
-from controller.plugins.controller.single.plugin import SingleApplicationController
+# from service.api.controller.main_controller import Main_Controller
 
 
 class TestMainController(unittest.TestCase):
@@ -63,16 +62,11 @@ class TestMainController(unittest.TestCase):
                            "bigsea_username": self.bigsea_username,
                            "bigsea_password": self.bigsea_password}
 
-        self.controller = Single_Application_Controller(
-            self.application_id_0, self.parameters)
-        self.controller_2 = Single_Application_Controller(
-            self.application_id_1, self.parameters)
-        self.main_controller = Main_Controller()
-
     def controllers(self, name, application_id, parameters):
-        return {self.application_id_0: self.controller, self.application_id_1: self.controller_2}[application_id]
+        return {self.application_id_0: self.controller,
+                self.application_id_1: self.controller_2}[application_id]
 
-    @unittest.skip("Main controller not exists")    
+    @unittest.skip("Main controller not exists")
     def test_start_and_stop_scaling_1_application(self):
         #
         # Starting scaling
@@ -80,7 +74,8 @@ class TestMainController(unittest.TestCase):
 
         # Setting up mocks
         self.main_controller.controller_builder.get_controller = MagicMock()
-        self.main_controller.controller_builder.get_controller.side_effect = self.controllers
+        self.main_controller.controller_builder\
+            .get_controller.side_effect = self.controllers
         self.controller.start_application_scaling = MagicMock(
             return_value=None)
         self.controller.stop_application_scaling = MagicMock(return_value=None)
@@ -92,16 +87,20 @@ class TestMainController(unittest.TestCase):
         time.sleep(5)
 
         # The builder was called to get a new controller
-        self.main_controller.controller_builder.get_controller.assert_called_once_with(
-            "single", self.application_id_0, self.parameters)
+        self.main_controller.controller_builder\
+            .get_controller.assert_called_once_with(
+                "single", self.application_id_0, self.parameters)
 
         # The controller was started and added to the pool
         self.controller.start_application_scaling.assert_called_once()
         self.assertEquals(
             1, len(self.main_controller.controller_thread_pool.items()))
-        self.assertTrue(self.application_id_0 in self.main_controller.controller_thread_pool.keys())
+        self.assertTrue(
+            self.application_id_0
+            in self.main_controller.controller_thread_pool.keys())
         self.assertEquals(
-            self.controller, self.main_controller.controller_thread_pool[self.application_id_0])
+            self.controller,
+            self.main_controller.controller_thread_pool[self.application_id_0])
 
         #
         # Stopping scaling
@@ -113,7 +112,8 @@ class TestMainController(unittest.TestCase):
         self.main_controller.stop_application_scaling(self.application_id_0)
 
         # The builder was not called
-        self.main_controller.controller_builder.get_controller.assert_not_called()
+        self.main_controller.controller_builder\
+            .get_controller.assert_not_called()
 
         # The controller was stopped and removed from the pool
         self.controller.stop_application_scaling.assert_called_once()
@@ -128,7 +128,8 @@ class TestMainController(unittest.TestCase):
 
         # Setting up mocks
         self.main_controller.controller_builder.get_controller = MagicMock()
-        self.main_controller.controller_builder.get_controller.side_effect = self.controllers
+        self.main_controller.controller_builder.get_controller.side_effect = \
+            self.controllers
         self.controller.start_application_scaling = MagicMock(
             return_value=None)
         self.controller.stop_application_scaling = MagicMock(return_value=None)
@@ -151,9 +152,12 @@ class TestMainController(unittest.TestCase):
         self.controller.start_application_scaling.assert_called_once()
         self.assertEquals(
             1, len(self.main_controller.controller_thread_pool.items()))
-        self.assertTrue(self.application_id_0 in self.main_controller.controller_thread_pool.keys())
+        self.assertTrue(
+            self.application_id_0
+            in self.main_controller.controller_thread_pool.keys())
         self.assertEquals(
-            self.controller, self.main_controller.controller_thread_pool[self.application_id_0])
+            self.controller,
+            self.main_controller.controller_thread_pool[self.application_id_0])
 
         # Starting scaling for application 1
         self.main_controller.start_application_scaling(
@@ -163,18 +167,25 @@ class TestMainController(unittest.TestCase):
         self.main_controller.controller_builder.get_controller.assert_any_call(
             "single", self.application_id_1, self.parameters)
         self.assertEquals(
-            2, self.main_controller.controller_builder.get_controller.call_count)
+            2,
+            self.main_controller.controller_builder.get_controller.call_count)
         self.controller_2.start_application_scaling.assert_called_once()
 
         # The controller is started and added to the pool
         self.assertEquals(
             2, len(self.main_controller.controller_thread_pool.items()))
-        self.assertTrue(self.application_id_0 in self.main_controller.controller_thread_pool.keys())
+        self.assertTrue(
+            self.application_id_0
+            in self.main_controller.controller_thread_pool.keys())
         self.assertEquals(
-            self.controller, self.main_controller.controller_thread_pool[self.application_id_0])
-        self.assertTrue(self.application_id_1 in self.main_controller.controller_thread_pool.keys())
+            self.controller,
+            self.main_controller.controller_thread_pool[self.application_id_0])
+        self.assertTrue(
+            self.application_id_1
+            in self.main_controller.controller_thread_pool.keys())
         self.assertEquals(
-            self.controller_2, self.main_controller.controller_thread_pool[self.application_id_1])
+            self.controller_2,
+            self.main_controller.controller_thread_pool[self.application_id_1])
 
         #
         # Stopping scaling
@@ -189,9 +200,12 @@ class TestMainController(unittest.TestCase):
         self.controller.stop_application_scaling.assert_called_once()
         self.assertEquals(
             1, len(self.main_controller.controller_thread_pool.items()))
-        self.assertTrue(self.application_id_1 in self.main_controller.controller_thread_pool.keys())
+        self.assertTrue(
+            self.application_id_1
+            in self.main_controller.controller_thread_pool.keys())
         self.assertEquals(
-            self.controller_2, self.main_controller.controller_thread_pool[self.application_id_1])
+            self.controller_2,
+            self.main_controller.controller_thread_pool[self.application_id_1])
 
         # Stopping scaling for application 1
         self.main_controller.stop_application_scaling(self.application_id_1)
@@ -201,7 +215,9 @@ class TestMainController(unittest.TestCase):
         self.assertEquals(
             0, len(self.main_controller.controller_thread_pool.items()))
 
-        self.main_controller.controller_builder.get_controller.assert_not_called()
+        self.main_controller\
+            .controller_builder.get_controller\
+            .assert_not_called()
 
 
 if __name__ == "__main__":

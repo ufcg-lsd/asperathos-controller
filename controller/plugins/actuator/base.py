@@ -23,6 +23,8 @@ infrastructure and triggering the commands or API calls that allocate or
 deallocate resources, based on other component's (normally the Controller)
 requests.
 '''
+
+
 class Actuator:
     __metaclass__ = ABCMeta
 
@@ -56,4 +58,3 @@ class Actuator:
     @abstractmethod
     def get_allocated_resources_to_cluster(self, vms_ids):
         pass
-

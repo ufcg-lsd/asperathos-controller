@@ -48,8 +48,8 @@ class ProportionalDerivativeAlarm:
 
         self.last_error = ""
         self.last_progress_error_timestamp = datetime.datetime.strptime(
-                                                 "0001-01-01T00:00:00.0Z",
-                                                 '%Y-%m-%dT%H:%M:%S.%fZ')
+            "0001-01-01T00:00:00.0Z",
+            '%Y-%m-%dT%H:%M:%S.%fZ')
         self.last_action = ""
         self.cap = -1
 
@@ -66,7 +66,7 @@ class ProportionalDerivativeAlarm:
 
         # Get the progress error value and timestamp
         progress_error_timestamp, progress_error = self._get_progress_error(
-                                                       self.application_id)
+            self.application_id)
 
         self.logger.log("Progress error-[%s]-%f" %
                         (str(progress_error_timestamp), progress_error))
@@ -149,8 +149,8 @@ class ProportionalDerivativeAlarm:
     def _get_progress_error(self, application_id):
         metric_name = ProportionalDerivativeAlarm.ERROR_METRIC_NAME
         progress_error_measurement = self.metric_source.get_most_recent_value(
-                                         metric_name,
-                                         {"application_id": application_id})
+            metric_name,
+            {"application_id": application_id})
 
         progress_error_timestamp = progress_error_measurement[0]
         progress_error = progress_error_measurement[1]
@@ -166,8 +166,8 @@ class ProportionalDerivativeAlarm:
 
         if heuristic == "error_proportional_derivative":
             return self._error_proportional_derivative(
-                       current_cap, progress_error, heuristic_options
-                   )
+                current_cap, progress_error, heuristic_options
+            )
         else:
             raise Exception("Unknown heuristic")
 

@@ -60,7 +60,8 @@ class TestGenericController(unittest.TestCase):
                            "bigsea_username": self.bigsea_username,
                            "bigsea_password": self.bigsea_password}
 
-        self.controller = GenericController(self.app_id_0, self.scaling_parameters)
+        self.controller = GenericController(
+            self.app_id_0, self.scaling_parameters)
 
     def test_start_and_stop_scaling(self):
         self.controller.alarm.check_application_state = MagicMock(

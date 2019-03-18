@@ -49,24 +49,25 @@ class TestInstanceLocator(unittest.TestCase):
 
         result = self.instance_locator.locate(self.vm_id)
 
-        self.ssh_utils.run_and_get_result.assert_any_call("virsh schedinfo %s > /dev/null 2> /dev/null ; echo $?" %
-                                                          (self.vm_id),
-                                                          self.user, self.compute_1, self.compute_nodes_key)
+        self.ssh_utils.run_and_get_result.assert_any_call(
+            "virsh schedinfo %s > /dev/null 2> /dev/null ; echo $?" %
+            (self.vm_id), self.user, self.compute_1, self.compute_nodes_key)
         self.assertEquals(result, self.compute_1)
 
     def test_locate_impossible_to_find_instance(self):
         self.ssh_utils.run_and_get_result = MagicMock()
-        self.ssh_utils.run_and_get_result.side_effect = self.impossible_to_locate
+        self.ssh_utils.run_and_get_result.side_effect = \
+            self.impossible_to_locate
 
         self.assertRaises(InstanceNotFoundException,
                           self.instance_locator.locate, self.vm_id)
 
-        self.ssh_utils.run_and_get_result.assert_any_call("virsh schedinfo %s > /dev/null 2> /dev/null ; echo $?" %
-                                                          (self.vm_id), self.user, self.compute_1,
-                                                          self.compute_nodes_key)
-        self.ssh_utils.run_and_get_result.assert_any_call("virsh schedinfo %s > /dev/null 2> /dev/null ; echo $?" %
-                                                          (self.vm_id), self.user,
-                                                          self.compute_2, self.compute_nodes_key)
+        self.ssh_utils.run_and_get_result.assert_any_call(
+            "virsh schedinfo %s > /dev/null 2> /dev/null ; echo $?" %
+            (self.vm_id), self.user, self.compute_1, self.compute_nodes_key)
+        self.ssh_utils.run_and_get_result.assert_any_call(
+            "virsh schedinfo %s > /dev/null 2> /dev/null ; echo $?" %
+            (self.vm_id), self.user, self.compute_2, self.compute_nodes_key)
 
 
 if __name__ == "__main__":
