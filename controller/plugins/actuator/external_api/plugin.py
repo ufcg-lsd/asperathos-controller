@@ -30,17 +30,19 @@ class ExternalApi:
 
     def get_api_address(self):
         """Get the address of the external API (i.e One of the nodes of the k8s cluster)
-        
+
         Arguments:
             None
 
         Returns:
             string -- The API address.
         """
+        try:
+            kube.config.load_kube_config(self.k8s_manifest)
+        except:
+            raise Exception("Couldn't load kube config")
 
-        kube.config.load_kube_config(self.k8s_manifest)
         CoreV1Api = kube.client.CoreV1Api()
         api_address = CoreV1Api.list_node().items[0].status.addresses[0].address
 
         return api_address
-    

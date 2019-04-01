@@ -17,16 +17,20 @@ from controller.plugins.actuator.base import Actuator
 # TODO: documentation
 
 from kubernetes import client, config
-
+from controller.utils.logger import Log
 
 class K8sActuator:
 
     def __init__(self, app_id, k8s_manifest):
         # load config from default location (~/.kube/config)
-        config.load_kube_config(k8s_manifest)
+        try:
+            config.load_kube_config(k8s_manifest)
+        except:
+            raise Exception("Couldn't load kube config")
         # api instance
         self.k8s_api = client.BatchV1Api()
         self.app_id = app_id
+        self.logger = Log("basic.controller.log", "controller.log")
 
     # TODO: validation
     def adjust_resources(self, replicas, namespace="default"):
@@ -36,7 +40,7 @@ class K8sActuator:
                                               namespace,
                                               patch_object)
         except Exception as e:
-            print e
+            self.logger.log(str(e))
 
     # TODO: validation
     def get_number_of_replicas(self, namespace="default"):

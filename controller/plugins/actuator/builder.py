@@ -25,7 +25,6 @@ from controller.plugins.actuator.kvm_upv.plugin import KVMUPVActuator
 from controller.plugins.actuator.service.plugin import ServiceActuator
 from controller.plugins.actuator.external_api.plugin import ExternalApi
 from controller.plugins.actuator.nop.plugin import NopActuator
-
 from controller.utils.locator.instance import InstanceLocator
 from controller.utils.locator.instance_tunnel import InstanceTunnelLocator
 from controller.utils.locator.service_instance import ServiceInstanceLocator
@@ -47,7 +46,7 @@ class ActuatorBuilder:
             compute_nodes = [x.strip()
                              for x in api.compute_nodes_str.split(",")]
 
-            if tunelling == "True": 
+            if tunelling == "True":
                 instance_locator = InstanceLocator(SSHUtils({}),
                                                    compute_nodes,
                                                    keypair)
@@ -90,7 +89,7 @@ class ActuatorBuilder:
                 instance_locator = InstanceLocator(SSHUtils({}),
                                                    compute_nodes,
                                                    keypair)
-     
+
                 remote_kvm = RemoteKVM(SSHUtils({}),
                                        keypair,
                                        iops_reference,
@@ -120,12 +119,10 @@ class ActuatorBuilder:
             return KVMUPVActuator(iops_reference, bs_reference)
 
         elif name == "k8s_replicas":
-            try:
-                actuator = K8sActuator(parameters['app_id'], 
-                               api.k8s_manifest)          
-            except Exception as e:
-                raise e
-            
+            actuator = K8sActuator(parameters['app_id'],
+                               api.k8s_manifest)
+
+
             return actuator
 
 
@@ -141,11 +138,8 @@ class ActuatorBuilder:
 
         elif name == "external_api":
             actuator_metric = api.actuator_metric
-            try:
-                actuator = ExternalApi(parameters['app_id'], 
-                               actuator_metric, api.k8s_manifest)          
-            except Exception as e:
-                raise e
+            actuator = ExternalApi(parameters['app_id'],
+                            actuator_metric, api.k8s_manifest)
 
             return actuator
 
