@@ -15,8 +15,6 @@
 
 from controller.plugins.actuator.base import Actuator
 from controller.exceptions.kvm import InstanceNotFoundException
-from controller.exceptions.infra import AuthorizationFailedException
-from controller.utils.authorizer import Authorizer
 
 
 class KVMIOActuator(Actuator):
@@ -35,7 +33,7 @@ class KVMIOActuator(Actuator):
                 self.remote.change_io_quota(host, vm, cap)
 
             except InstanceNotFoundException:
-                print "instance not found:%s" % (instance)
+                print "instance not found:%s" % (vmcap_map)
 
     def get_allocated_resources(self, vm_id):
         host = self.locator.locate(vm_id)

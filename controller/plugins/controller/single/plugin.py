@@ -20,7 +20,6 @@ from controller.plugins.actuator.builder import ActuatorBuilder
 from controller.plugins.metric_source.builder import MetricSourceBuilder
 from controller.plugins.controller.base import Controller
 from controller.plugins.controller.basic.alarm import BasicAlarm
-from controller.exceptions.monasca import MetricNotFoundException
 
 from controller.utils.logger import Log, configure_logging
 
@@ -47,8 +46,8 @@ class SingleApplicationController(Controller):
         self.running_lock = threading.RLock()
 
         metric_source = MetricSourceBuilder().get_metric_source(
-                            self.metric_source_type, plugin_info
-                        )
+            self.metric_source_type, plugin_info
+        )
 
         actuator = ActuatorBuilder().get_actuator(self.actuator_type,
                                                   plugin_info)

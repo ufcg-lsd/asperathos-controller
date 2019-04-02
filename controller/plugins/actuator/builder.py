@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import ConfigParser
 
 from controller.utils.ssh import SSHUtils
 import controller.service.api as api
@@ -47,7 +46,7 @@ class ActuatorBuilder:
             compute_nodes = [x.strip()
                              for x in api.compute_nodes_str.split(",")]
 
-            if tunelling == "True": 
+            if tunelling == "True":
                 instance_locator = InstanceLocator(SSHUtils({}),
                                                    compute_nodes,
                                                    keypair)
@@ -63,9 +62,9 @@ class ActuatorBuilder:
                 hosts_ports = dict(zip(compute_nodes, ports))
 
                 instance_locator = InstanceTunnelLocator(
-                                       SSHUtils(hosts_ports),
-                                       compute_nodes,
-                                       keypair)
+                    SSHUtils(hosts_ports),
+                    compute_nodes,
+                    keypair)
 
                 remote_kvm = RemoteKVMTunnel(SSHUtils(hosts_ports),
                                              keypair,
@@ -90,7 +89,7 @@ class ActuatorBuilder:
                 instance_locator = InstanceLocator(SSHUtils({}),
                                                    compute_nodes,
                                                    keypair)
-     
+
                 remote_kvm = RemoteKVM(SSHUtils({}),
                                        keypair,
                                        iops_reference,
@@ -102,9 +101,9 @@ class ActuatorBuilder:
                 hosts_ports = dict(zip(compute_nodes, ports))
 
                 instance_locator = InstanceTunnelLocator(
-                                       SSHUtils(hosts_ports),
-                                       compute_nodes,
-                                       keypair)
+                    SSHUtils(hosts_ports),
+                    compute_nodes,
+                    keypair)
 
                 remote_kvm = RemoteKVMTunnel(SSHUtils(hosts_ports),
                                              keypair,
@@ -121,13 +120,12 @@ class ActuatorBuilder:
 
         elif name == "k8s_replicas":
             try:
-                actuator = K8sActuator(parameters['app_id'], 
-                               api.k8s_manifest)          
+                actuator = K8sActuator(parameters['app_id'],
+                                       api.k8s_manifest)
             except Exception as e:
                 raise e
-            
-            return actuator
 
+            return actuator
 
         elif name == "service":
             actuator_port = api.actuator_port
@@ -142,8 +140,8 @@ class ActuatorBuilder:
         elif name == "external_api":
             actuator_metric = api.actuator_metric
             try:
-                actuator = ExternalApi(parameters['app_id'], 
-                               actuator_metric, api.k8s_manifest)          
+                actuator = ExternalApi(parameters['app_id'],
+                                       actuator_metric, api.k8s_manifest)
             except Exception as e:
                 raise e
 

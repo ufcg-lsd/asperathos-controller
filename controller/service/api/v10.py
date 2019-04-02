@@ -13,14 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from flask import request
 from controller.plugins.actuator.builder import ActuatorBuilder
 from controller.plugins.controller.builder import ControllerBuilder
 from controller.utils.logger import Log
-from controller.utils import authorizer
-from controller.service import api
 from controller.exceptions import api as ex
-import time
 from threading import Thread
 
 
@@ -39,7 +35,7 @@ def setup_environment(data):
 
     plugin = data['actuator_plugin']
     instances_cap = data['instances_cap']
-    
+
     actuator = actuator_builder.get_actuator(plugin)
     try:
         actuator.adjust_resources(instances_cap)
@@ -53,7 +49,7 @@ def start_scaling(app_id, data):
         raise ex.BadRequestException()
 
     plugin = data["control_plugin"]
-    
+
     controller = controller_builder.get_controller(plugin, app_id,
                                                    data)
     executor = Thread(target=controller.start_application_scaling)
@@ -65,11 +61,11 @@ def start_scaling(app_id, data):
 def stop_scaling(app_id):
     if app_id in scaled_apps:
         API_LOG.log("Removing application id: %s" % (app_id))
-    
+
         executor = scaled_apps[app_id]
         executor.stop_application_scaling()
         scaled_apps.pop(app_id)
-    
+
     else:
         raise ex.BadRequestException()
 

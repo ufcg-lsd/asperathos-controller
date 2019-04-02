@@ -25,6 +25,7 @@ from controller.plugins.controller.tendency.alarm import (
     TendencyAwareProportionalAlarm
 )
 
+
 class TendencyAwareProportionalController(Controller):
 
     def __init__(self, application_id, plugin_info):
@@ -51,8 +52,8 @@ class TendencyAwareProportionalController(Controller):
 
         # Gets a new metric source plugin using the given name
         metric_source = MetricSourceBuilder().get_metric_source(
-                            self.metric_source_type, plugin_info
-                        )
+            self.metric_source_type, plugin_info
+        )
 
         # Gets a new actuator plugin using the given name
         actuator = ActuatorBuilder().get_actuator(self.actuator_type,

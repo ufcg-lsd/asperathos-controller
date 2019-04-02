@@ -39,16 +39,16 @@ class ProportionalAlarm:
         self.instances = instances
 
         self.logger = ScalingLog(
-                          "%s.proportional.alarm.log" % (application_id),
-                          "controller.log", application_id)
+            "%s.proportional.alarm.log" % (application_id),
+            "controller.log", application_id)
 
         self.cap_logger = ScalingLog("%s.cap.log" % (application_id),
                                      "cap.log",
                                      application_id)
 
         self.last_progress_error_timestamp = datetime.datetime.strptime(
-                                                 "0001-01-01T00:00:00.0Z",
-                                                 '%Y-%m-%dT%H:%M:%S.%fZ')
+            "0001-01-01T00:00:00.0Z",
+            '%Y-%m-%dT%H:%M:%S.%fZ')
         self.last_action = ""
         self.cap = -1
 
@@ -145,8 +145,8 @@ class ProportionalAlarm:
 
     def _get_progress_error(self, application_id):
         progress_error_measurement = self.metric_source.get_most_recent_value(
-                                         ProportionalAlarm.ERROR_METRIC_NAME,
-                                         {"application_id": application_id})
+            ProportionalAlarm.ERROR_METRIC_NAME,
+            {"application_id": application_id})
 
         progress_error_timestamp = progress_error_measurement[0]
         progress_error = progress_error_measurement[1]

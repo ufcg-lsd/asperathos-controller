@@ -46,8 +46,8 @@ class PIDAlarm:
 
         self.last_error = ""
         self.last_error_timestamp = datetime.datetime.strptime(
-                                                 "0001-01-01T00:00:00.0Z",
-                                                 '%Y-%m-%dT%H:%M:%S.%fZ')
+            "0001-01-01T00:00:00.0Z",
+            '%Y-%m-%dT%H:%M:%S.%fZ')
         self.last_action = ""
         self.cap = -1
 

@@ -52,10 +52,11 @@ class RemoteKVM:
             if cap == 0:
                 raise Exception("Could not get allocated resources")
 
-            if cap < 0: cap = 100
+            if cap < 0:
+                cap = 100
             return cap
 
-        except:
+        except BaseException:
             # FIXME: review this exception type
             raise Exception("Could not get allocated resources")
 
@@ -67,7 +68,7 @@ class RemoteKVM:
         try:
             quota = int(ssh_result)
             return 100 * quota / float(self.iops_reference)
-        except:
+        except BaseException:
             # FIXME: review this exception type
             raise Exception("Could not get allocated resources")
 
@@ -86,7 +87,7 @@ class RemoteKVM:
         return command
 
     def _format_change_io_quota_command(self, vm_id, cap, iops_reference,
-                                 bs_reference):
+                                        bs_reference):
         command_iops_quota = (cap * iops_reference) / 100
         command_bs_quota = (cap * bs_reference) / 100
 
@@ -103,4 +104,3 @@ class RemoteKVM:
                    "if(NR==4){print 100*$3/period}}'" % (vm_id))
 
         return command
-
