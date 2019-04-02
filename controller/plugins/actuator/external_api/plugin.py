@@ -40,7 +40,7 @@ class ExternalApi:
         """
         try:
             kube.config.load_kube_config(self.k8s_manifest)
-        except:
+        except Exception:
             raise Exception("Couldn't load kube config")
 
         CoreV1Api = kube.client.CoreV1Api()

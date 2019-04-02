@@ -119,10 +119,7 @@ class ActuatorBuilder:
 
         elif name == "k8s_replicas":
             actuator = K8sActuator(parameters['app_id'],
-                               api.k8s_manifest)
-
-
-            return actuator
+                                   api.k8s_manifest)
 
             return actuator
 
@@ -139,6 +136,7 @@ class ActuatorBuilder:
         elif name == "external_api":
             actuator_metric = api.actuator_metric
             actuator = ExternalApi(parameters['app_id'],
+                                   actuator_metric, api.k8s_manifest)
 
             return actuator
 

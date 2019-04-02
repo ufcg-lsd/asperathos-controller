@@ -19,6 +19,7 @@ from controller.api.v10 import rest
 from controller.service import api
 from controller.utils import logger
 
+
 def main():
     app = Flask(__name__)
     app.register_blueprint(rest)
