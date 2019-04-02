@@ -40,17 +40,18 @@ class TestBasicActuator(unittest.TestCase):
         self.bigsea_username = "username"
         self.bigsea_password = "password"
         self.authorization_url = "authorization_url"
-        # self.authorization_data = dict(authorization_url=self.authorization_url,
-        #                                bigsea_username=self.bigsea_username,
-        #                                bigsea_password=self.bigsea_password)
+        # self.authorization_data = dict(
+        # authorization_url=self.authorization_url,
+        # bigsea_username=self.bigsea_username,
+        # bigsea_password=self.bigsea_password)
 
         compute_nodes = []
         compute_nodes_key = "key"
         self.instance_locator = InstanceLocator(
             SSHUtils({}), compute_nodes, compute_nodes_key)
         self.remote_kvm = RemoteKVM(SSHUtils({}), compute_nodes_key)
-        self.actuator = KVMActuator(self.instance_locator, self.remote_kvm,# self.authorization_data,
-                                     self.io_cap)
+        self.actuator = KVMActuator(self.instance_locator,
+                                    self.remote_kvm, self.io_cap)
 
     def locator(self, vm_id):
         return {self.vm_id1: self.host_ip1, self.vm_id2: self.host_ip2}[vm_id]
@@ -65,10 +66,10 @@ class TestBasicActuator(unittest.TestCase):
     def test_authorization(self):
         self.actuator.authorizer.get_authorization = MagicMock(
             return_value={'success': True})
-        
+
         # Actuator tries to authenticate
-        self.actuator.authorizer.get_authorization.assert_called_once_with(self.authorization_url,
-                                                                           self.bigsea_username, self.bigsea_password)
+        self.actuator.authorizer.get_authorization.assert_called_once_with(
+            self.authorization_url, self.bigsea_username, self.bigsea_password)
 
     def test_adjust_resources_locates_and_acts_correctly_1_instance(self):
         vm_data = {self.vm_id1: self.cap1}
@@ -76,7 +77,7 @@ class TestBasicActuator(unittest.TestCase):
         self.instance_locator.locate = MagicMock(return_value=self.host_ip1)
         self.remote_kvm.change_vcpu_quota = MagicMock(return_value=None)
         self.remote_kvm.change_io_quota = MagicMock(return_value=None)
-        
+
         self.actuator.adjust_resources(vm_data)
 
         # Actuator tries to locate the instances
@@ -87,7 +88,6 @@ class TestBasicActuator(unittest.TestCase):
             self.host_ip1, self.vm_id1, self.cap1)
         self.remote_kvm.change_io_quota.assert_called_once_with(
             self.host_ip1, self.vm_id1, self.io_cap)
-
 
     def test_adjust_resources_locates_and_acts_correctly_n_instances(self):
         vm_data = {self.vm_id1: self.cap1, self.vm_id2: self.cap2}
@@ -124,11 +124,12 @@ class TestBasicActuator(unittest.TestCase):
         vm_data = {self.vm_id1: self.cap1, self.vm_id2: self.cap2}
 
         self.instance_locator.locate = MagicMock()
-        self.instance_locator.locate.side_effect = self.locator_instance_does_not_exist
+        self.instance_locator.locate.side_effect = \
+            self.locator_instance_does_not_exist
 
         self.remote_kvm.change_vcpu_quota = MagicMock(return_value=None)
         self.remote_kvm.change_io_quota = MagicMock(return_value=None)
-        
+
         self.actuator.adjust_resources(vm_data)
 
         # Actuator tries to locate the instances
@@ -140,7 +141,6 @@ class TestBasicActuator(unittest.TestCase):
             self.host_ip1, self.vm_id1, self.cap1)
         self.remote_kvm.change_io_quota.assert_called_once_with(
             self.host_ip1, self.vm_id1, self.io_cap)
-
 
     def test_get_allocated_resources(self):
         self.instance_locator.locate = MagicMock()
@@ -159,14 +159,13 @@ class TestBasicActuator(unittest.TestCase):
         self.remote_kvm.get_allocated_resources.assert_called_once_with(
             self.host_ip1, self.vm_id1)
 
-
     def test_get_allocated_resources_to_cluster(self):
         vms_ids = [self.vm_id1, self.vm_id2]
 
         self.instance_locator.locate = MagicMock()
         self.instance_locator.locate.side_effect = self.locator
         self.remote_kvm.get_allocated_resources = MagicMock(return_value=50)
-        
+
         self.actuator.get_allocated_resources_to_cluster(vms_ids)
 
         # Actuator tries to locate the first instance
@@ -176,14 +175,13 @@ class TestBasicActuator(unittest.TestCase):
         self.remote_kvm.get_allocated_resources.assert_called_once_with(
             self.host_ip1, self.vm_id1)
 
-
     def test_get_allocated_resources_to_cluster_instance_does_not_exist(self):
         vms_ids = [self.vm_id2, self.vm_id1]
 
         self.instance_locator.locate = MagicMock()
-        self.instance_locator.locate.side_effect = self.locator_instance_does_not_exist
+        self.instance_locator.locate.side_effect = \
+            self.locator_instance_does_not_exist
         self.remote_kvm.get_allocated_resources = MagicMock(return_value=50)
-       
 
         self.actuator.get_allocated_resources_to_cluster(vms_ids)
 
@@ -195,13 +193,13 @@ class TestBasicActuator(unittest.TestCase):
         self.remote_kvm.get_allocated_resources.assert_called_once_with(
             self.host_ip1, self.vm_id1)
 
-       
     @unittest.skip("Authorization isn't working")
     def test_adjust_resources_raises_exception_if_not_authorized(self):
         vm_data = {self.vm_id1: self.cap1, self.vm_id2: self.cap2}
 
         self.instance_locator.locate = MagicMock()
-        self.instance_locator.locate.side_effect = self.locator_instance_does_not_exist
+        self.instance_locator.locate.side_effect = \
+            self.locator_instance_does_not_exist
 
         self.remote_kvm.change_vcpu_quota = MagicMock(return_value=None)
         self.actuator.authorizer.get_authorization = MagicMock(
@@ -209,19 +207,22 @@ class TestBasicActuator(unittest.TestCase):
 
         self.assertRaises(AuthorizationFailedException,
                           self.actuator.adjust_resources, vm_data)
-    
+
     @unittest.skip("Authorization isn't working")
     def test_get_allocated_resources_raises_exception_if_not_authorized(self):
         vms_ids = [self.vm_id2, self.vm_id1]
 
         self.instance_locator.locate = MagicMock()
-        self.instance_locator.locate.side_effect = self.locator_instance_does_not_exist
+        self.instance_locator.locate.side_effect = \
+            self.locator_instance_does_not_exist
         self.remote_kvm.get_allocated_resources = MagicMock(return_value=50)
         self.actuator.authorizer.get_authorization = MagicMock(
             return_value={'success': False})
 
-        self.assertRaises(AuthorizationFailedException,
-                          self.actuator.get_allocated_resources_to_cluster, vms_ids)
+        self.assertRaises(
+            AuthorizationFailedException,
+            self.actuator.get_allocated_resources_to_cluster,
+            vms_ids)
 
 
 if __name__ == "__main__":

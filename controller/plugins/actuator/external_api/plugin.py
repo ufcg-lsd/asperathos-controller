@@ -13,12 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 import kubernetes as kube
 
 """
 Class that implements that plugin of the external-api actuator
 """
+
 
 class ExternalApi:
 
@@ -29,7 +29,8 @@ class ExternalApi:
         self.api_address = self.get_api_address()
 
     def get_api_address(self):
-        """Get the address of the external API (i.e One of the nodes of the k8s cluster)
+        """Get the address of the external API
+        (i.e One of the nodes of the k8s cluster)
 
         Arguments:
             None
@@ -43,6 +44,7 @@ class ExternalApi:
             raise Exception("Couldn't load kube config")
 
         CoreV1Api = kube.client.CoreV1Api()
-        api_address = CoreV1Api.list_node().items[0].status.addresses[0].address
+        api_address = CoreV1Api.list_node(
+        ).items[0].status.addresses[0].address
 
         return api_address

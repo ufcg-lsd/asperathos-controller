@@ -21,7 +21,8 @@ class MetricSource:
     __metaclass__ = ABCMeta
 
     '''
-        Returns the most recent measured value of the metric "metric_name", using the given options
+        Returns the most recent measured value of the metric "metric_name",
+        using the given options
         as filter parameters
     '''
     @abstractmethod

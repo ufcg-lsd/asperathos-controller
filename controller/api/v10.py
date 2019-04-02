@@ -13,10 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from flask import request
 
 from controller.utils import api as u
-from controller.utils.logger import Log
 from controller.service.api import v10 as api
 
 

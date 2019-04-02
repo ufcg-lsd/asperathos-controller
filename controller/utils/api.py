@@ -20,7 +20,7 @@ from werkzeug import datastructures
 
 from controller.exceptions import api as ex
 from controller.utils import serializer as u_serializer
-from controller.utils.logger import *
+from controller.utils.logger import Log
 
 
 LOG = Log("UtilsAPI", "utilsapi.log")
@@ -49,7 +49,7 @@ class Rest(flask.Blueprint):
         return self._mroute('PATCH', rule, status_code)
 
     def _mroute(self, methods, rule, status_code=None, **kw):
-        if type(methods) is str:
+        if isinstance(methods, str):
             methods = [methods]
         return self.route(rule, methods=methods, status_code=status_code, **kw)
 
@@ -114,7 +114,7 @@ def _init_resp_type(file_upload):
 def render(res=None, resp_type=None, status=None, **kwargs):
     if not res:
         res = {}
-    if type(res) is dict:
+    if isinstance(res, dict):
         res.update(kwargs)
     elif kwargs:
         # can't merge kwargs into the non-dict res

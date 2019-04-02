@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import requests
 
 
@@ -26,10 +25,11 @@ class Authorizer:
     def get_authorization(self, authorizer_url, username, password):
         data = self._get_authorization_data(username, password)
         r = requests.post(authorizer_url, data=data)
-        content_dict = eval(r.content.replace("true", "True").\
-                           replace("false", "False"))
+        content_dict = eval(r.content.replace("true", "True").
+                            replace("false", "False"))
 
         return content_dict
+
 
 def get_authorization(authorizer_url, username, password):
     format_data = (lambda user, pwd: "user=%s&pwd=%s" % (user, pwd))

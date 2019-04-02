@@ -55,5 +55,5 @@ class ServiceActuator(Actuator):
 
             return float(response.text)
 
-        except:
+        except BaseException:
             raise Exception("Could not get allocated resources")

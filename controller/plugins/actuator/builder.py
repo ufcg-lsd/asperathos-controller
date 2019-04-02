@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import ConfigParser
 
 from controller.utils.ssh import SSHUtils
 import controller.service.api as api
@@ -62,9 +61,9 @@ class ActuatorBuilder:
                 hosts_ports = dict(zip(compute_nodes, ports))
 
                 instance_locator = InstanceTunnelLocator(
-                                       SSHUtils(hosts_ports),
-                                       compute_nodes,
-                                       keypair)
+                    SSHUtils(hosts_ports),
+                    compute_nodes,
+                    keypair)
 
                 remote_kvm = RemoteKVMTunnel(SSHUtils(hosts_ports),
                                              keypair,
@@ -101,9 +100,9 @@ class ActuatorBuilder:
                 hosts_ports = dict(zip(compute_nodes, ports))
 
                 instance_locator = InstanceTunnelLocator(
-                                       SSHUtils(hosts_ports),
-                                       compute_nodes,
-                                       keypair)
+                    SSHUtils(hosts_ports),
+                    compute_nodes,
+                    keypair)
 
                 remote_kvm = RemoteKVMTunnel(SSHUtils(hosts_ports),
                                              keypair,
@@ -125,6 +124,7 @@ class ActuatorBuilder:
 
             return actuator
 
+            return actuator
 
         elif name == "service":
             actuator_port = api.actuator_port
@@ -139,7 +139,6 @@ class ActuatorBuilder:
         elif name == "external_api":
             actuator_metric = api.actuator_metric
             actuator = ExternalApi(parameters['app_id'],
-                            actuator_metric, api.k8s_manifest)
 
             return actuator
 

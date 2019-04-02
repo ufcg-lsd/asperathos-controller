@@ -16,7 +16,6 @@
 from controller.plugins.actuator.builder import ActuatorBuilder
 from controller.plugins.metric_source.builder import MetricSourceBuilder
 from controller.plugins.controller.base import Controller
-from controller.plugins.controller.generic.alarm import GenericAlarm
 from controller.plugins.controller.pid.alarm import PIDAlarm
 from controller.exceptions.monasca import MetricNotFoundException
 
@@ -48,8 +47,8 @@ class PIDController(Controller):
         self.running_lock = threading.RLock()
 
         metric_source = MetricSourceBuilder().get_metric_source(
-                            self.metric_source_type,
-                            plugin_info)
+            self.metric_source_type,
+            plugin_info)
 
         actuator = ActuatorBuilder().get_actuator(self.actuator_type)
 

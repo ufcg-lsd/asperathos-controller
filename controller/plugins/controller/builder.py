@@ -45,7 +45,7 @@ class ControllerBuilder:
             actuator_type = plugin_info["policy"]["actuator"]
 
             metric_source = MetricSourceBuilder().get_metric_source(
-                                metric_source_type, plugin_info)
+                metric_source_type, plugin_info)
 
             actuator = ActuatorBuilder().get_actuator(actuator_type)
 
@@ -69,7 +69,7 @@ class ControllerBuilder:
 
         elif name == "progress_tendency":
             return TendencyAwareProportionalController(app_id,
-                                                          plugin_info)
+                                                       plugin_info)
 
         elif name == "kubejobs":
             return KubejobsController(app_id, plugin_info)

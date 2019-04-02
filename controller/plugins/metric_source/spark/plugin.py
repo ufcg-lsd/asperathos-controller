@@ -46,7 +46,8 @@ class SparkMetricSource:
         return completed_tasks / float(total_tasks)
 
     def _get_time_progress(self, response_json, expected_time):
-        return self._get_elapsed_time(response_json[-1]['submissionTime']) / float(expected_time)
+        return self._get_elapsed_time(
+            response_json[-1]['submissionTime']) / float(expected_time)
 
     def get_most_recent_value(self, metric_name, options):
         spark_master_ip = self.parameters["spark_master_ip"]
@@ -55,7 +56,8 @@ class SparkMetricSource:
         expected_time = self.parameters["expected_time"]
 
         response = requests.get(
-            'http://%s:4040/api/v1/applications/%s/jobs' % (spark_master_ip, app_id))
+            'http://%s:4040/api/v1/applications/%s/jobs' %
+            (spark_master_ip, app_id))
         response_json = response.json()
 
         job_progress = self._get_progress(response_json, total_tasks)

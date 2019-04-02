@@ -15,8 +15,6 @@
 
 from controller.plugins.actuator.base import Actuator
 from controller.exceptions.kvm import InstanceNotFoundException
-from controller.exceptions.infra import AuthorizationFailedException
-from controller.utils.authorizer import Authorizer
 
 
 class KVMActuator(Actuator):

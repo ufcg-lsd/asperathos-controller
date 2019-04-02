@@ -22,11 +22,12 @@ from controller.plugins.metric_source.builder import MetricSourceBuilder
 from controller.plugins.controller.vertical.alarm import Vertical
 from controller.utils.logger import ScalingLog
 
+
 class VerticalController(Controller):
 
     def __init__(self, application_id, parameters):
         self.logger = ScalingLog(
-                "diff.controller.log", "controller.log", application_id)
+            "diff.controller.log", "controller.log", application_id)
         scaling_parameters = parameters["control_parameters"]
         self.application_id = application_id
         parameters.update({"app_id": application_id})
@@ -45,23 +46,31 @@ class VerticalController(Controller):
         # The metric source plugin name
         self.metric_source_type = scaling_parameters["metric_source"]
 
-        # We use a lock here to prevent race conditions when stopping the controller
+        # We use a lock here to prevent race conditions when stopping the
+        # controller
         self.running = True
         self.running_lock = threading.RLock()
 
         # Gets a new metric source plugin using the given name
         metric_source = MetricSourceBuilder().get_metric_source(
             self.metric_source_type, parameters)
-            
+
         # TODO: Add new actuator as option in the ActuatorBuilder
         # Gets a new actuator plugin using the given name
-        actuator = ActuatorBuilder().get_actuator(self.actuator_type, 
+        actuator = ActuatorBuilder().get_actuator(self.actuator_type,
                                                   parameters=parameters)
 
-        # The alarm here is responsible for deciding whether to scale up or down, or even do nothing
-        self.alarm = Vertical(actuator, metric_source, self.actuator_metric, self.trigger_down, 
-                              self.trigger_up, self.min_quota, self.max_quota, 
-                              self.application_id)
+        # The alarm here is responsible for deciding whether to scale up or
+        # down, or even do nothing
+        self.alarm = Vertical(
+            actuator,
+            metric_source,
+            self.actuator_metric,
+            self.trigger_down,
+            self.trigger_up,
+            self.min_quota,
+            self.max_quota,
+            self.application_id)
 
     def start_application_scaling(self):
         run = True

@@ -54,22 +54,23 @@ class RemoteKVMTunnel:
             if cap == 0:
                 raise Exception("Could not get allocated resources")
 
-            if cap < 0: cap = 100
+            if cap < 0:
+                cap = 100
             return cap
 
-        except:
+        except BaseException:
             # FIXME: review this exception type
             raise Exception("Could not get allocated resources")
 
     def get_io_quota(self, host_ip, vm_id):
         command = self._format_get_io_quota_command(vm_id)
-        ssh_result = self.ssh.run_and_get_result_tunnel(command, "root", host_ip,
-                                                        self.keypair)
+        ssh_result = self.ssh.run_and_get_result_tunnel(
+            command, "root", host_ip, self.keypair)
 
         try:
             quota = int(ssh_result)
             return 100 * quota / float(self.iops_reference)
-        except:
+        except BaseException:
             # FIXME: review this exception type
             raise Exception("Could not get allocated resources")
 
@@ -88,7 +89,7 @@ class RemoteKVMTunnel:
         return command
 
     def _format_change_io_quota_command(self, vm_id, cap, iops_reference,
-                                 bs_reference):
+                                        bs_reference):
         command_iops_quota = (cap * iops_reference) / 100
         command_bs_quota = (cap * bs_reference) / 100
 
@@ -105,4 +106,3 @@ class RemoteKVMTunnel:
                    "if(NR==4){print 100*$3/period}}'" % (vm_id))
 
         return command
-

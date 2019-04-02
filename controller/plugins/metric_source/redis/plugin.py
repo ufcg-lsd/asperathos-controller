@@ -34,7 +34,7 @@ class RedisMetricSource(MetricSource):
         if measurement is not None:
             measurement = ast.literal_eval(measurement)
             timestamp = datetime.datetime.fromtimestamp(
-                measurement['timestamp']/1000)
+                measurement['timestamp'] / 1000)
             value = float(measurement['value'])
             if timestamp > self.last_timestamp:
                 self.last_timestamp = timestamp

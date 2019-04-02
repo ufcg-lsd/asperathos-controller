@@ -26,6 +26,7 @@ from controller.plugins.controller.proportional_derivative.alarm import (
 
 from controller.utils.logger import ScalingLog
 
+
 class ProportionalDerivativeController(Controller):
 
     def __init__(self, application_id, plugin_info):

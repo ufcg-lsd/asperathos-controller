@@ -16,6 +16,7 @@
 import threading
 import time
 
+from controller.exceptions.monasca import MetricNotFoundException
 from controller.plugins.actuator.builder import ActuatorBuilder
 from controller.plugins.metric_source.builder import MetricSourceBuilder
 from controller.plugins.controller.base import Controller
@@ -26,6 +27,8 @@ from controller.utils.logger import ScalingLog
 """ This class dictates the pace of the scaling process. It controls when
     GenericAlarm is called to check application state and when
     is necessary to wait. """
+
+
 class GenericController(Controller):
 
     def __init__(self, application_id, plugin_info):
@@ -44,7 +47,7 @@ class GenericController(Controller):
         self.metric_rounding = plugin_info["metric_rounding"]
         self.actuator_type = plugin_info["actuator"]
         self.metric_source_type = plugin_info["metric_source"]
-         
+
         """ We use a lock here to prevent race conditions
             when stopping the controller """
         self.running = True

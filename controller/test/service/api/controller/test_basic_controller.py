@@ -22,13 +22,19 @@ from controller.plugins.controller.basic.plugin import BasicController
 from controller.plugins.metric_source.builder import MetricSourceBuilder
 from controller.plugins.actuator.builder import ActuatorBuilder
 
+
 class TestBasicController(unittest.TestCase):
 
     CHECK_INTERVAL = 1
 
     def config_values(self, section, option):
-        values = {"check_interval": self.CHECK_INTERVAL, "trigger_down": 10, "trigger_up": 10,
-                  "min_cap": 10, "max_cap": 100, "actuation_size": 20}
+        values = {
+            "check_interval": self.CHECK_INTERVAL,
+            "trigger_down": 10,
+            "trigger_up": 10,
+            "min_cap": 10,
+            "max_cap": 100,
+            "actuation_size": 20}
 
         if section == "scaling":
             if option in values.keys():
@@ -43,8 +49,14 @@ class TestBasicController(unittest.TestCase):
         self.bigsea_username = "username"
         self.bigsea_password = "password"
 
-        scaling_parameters = {"check_interval": self.CHECK_INTERVAL, "trigger_down": 10, "trigger_up": 10,
-                              "min_cap": 10, "max_cap": 100, "actuation_size": 20, "metric_rounding": 2}
+        scaling_parameters = {
+            "check_interval": self.CHECK_INTERVAL,
+            "trigger_down": 10,
+            "trigger_up": 10,
+            "min_cap": 10,
+            "max_cap": 100,
+            "actuation_size": 20,
+            "metric_rounding": 2}
 
         parameters = {"scaling_parameters": scaling_parameters,
                       "bigsea_username": self.bigsea_username,
@@ -53,7 +65,8 @@ class TestBasicController(unittest.TestCase):
         metric_source = MetricSourceBuilder().get_metric_source("nop", {})
         actuator = ActuatorBuilder().get_actuator("nop", parameters)
 
-        self.controller = BasicController(metric_source, actuator, scaling_parameters)
+        self.controller = BasicController(
+            metric_source, actuator, scaling_parameters)
         self.application_id_1 = "app-01"
         self.application_id_2 = "app-02"
         self.instance_1 = "instance-1"
@@ -132,7 +145,8 @@ class TestBasicController(unittest.TestCase):
         self.controller.alarm.check_application_state = MagicMock(
             return_value=None)
         self.controller.applications = {
-            self.application_id_1: self.parameters_1, self.application_id_2: self.parameters_2}
+            self.application_id_1: self.parameters_1,
+            self.application_id_2: self.parameters_2}
 
         # Stop scaling for application 1
         self.controller.stop_application_scaling(self.application_id_1)

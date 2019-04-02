@@ -131,7 +131,7 @@ class KVMUPVActuator(Actuator):
 
         virsh_schedinfo = (("virsh schedinfo %s" % virsh_id) +
                            (" --set vcpu_quota=$(( %s * 1000 ))" % (cap)) +
-                            " > /dev/null")
+                           " > /dev/null")
 
         command = ("ssh root@%s \'ssh %s \'%s\'\'"
                    % (self.compute_nodes_frontend, host, virsh_schedinfo))
@@ -167,14 +167,14 @@ class KVMUPVActuator(Actuator):
         command_iops_quota = (cap * self.iops_reference) / 100
         command_bs_quota = (cap * self.bs_reference) / 100
 
-        command_set_io_quota = ("virsh blkdeviotune %s %s "\
-                                "--current --total_iops_sec %s "\
+        command_set_io_quota = ("virsh blkdeviotune %s %s "
+                                "--current --total_iops_sec %s "
                                 "--total_bytes_sec %s"
                                 % (virsh_id, block_device,
                                    command_iops_quota,
                                    command_bs_quota))
 
-        command = ("ssh root@%s \'ssh %s \'%s\'\'" 
+        command = ("ssh root@%s \'ssh %s \'%s\'\'"
                    % (self.compute_nodes_frontend, host, command_set_io_quota))
 
         print ("_change_io_quota: id: %s - iops: %s - bs: %s"

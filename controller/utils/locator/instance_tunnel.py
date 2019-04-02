@@ -33,7 +33,8 @@ class InstanceTunnelLocator:
                                                          compute_node,
                                                          self.keypair)
 
-            if in_node == "0\n": return compute_node
+            if in_node == "0\n":
+                return compute_node
 
         message = ("""It was not possible to find the instance:
                       command %s, ssh return value %s""" % (command, in_node))

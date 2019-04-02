@@ -49,8 +49,8 @@ class BasicAlarm:
 
     def get_job_progress(self, application_id):
         job_progress_measurement = self.metric_source.get_most_recent_value(
-                                       Basic_Alarm.PROGRESS_METRIC_NAME,
-                                       {"application_id": application_id})
+            BasicAlarm.PROGRESS_METRIC_NAME,
+            {"application_id": application_id})
 
         job_progress_timestamp = job_progress_measurement[0]
         job_progress = job_progress_measurement[1]
@@ -60,8 +60,8 @@ class BasicAlarm:
 
     def get_time_progress(self, application_id):
         time_progress_measurement = self.metric_source.get_most_recent_value(
-                                        Basic_Alarm.ELAPSED_TIME_METRIC_NAME,
-                                        {"application_id": application_id})
+            BasicAlarm.ELAPSED_TIME_METRIC_NAME,
+            {"application_id": application_id})
 
         time_progress_timestamp = time_progress_measurement[0]
         time_progress = time_progress_measurement[1]
@@ -88,10 +88,10 @@ class BasicAlarm:
                 application_id)
 
             self.logger.log("Progress-[%s]-%f|Time progress-[%s]-%f" %
-                           (str(job_progress_timestamp),
-                            job_progress,
-                            str(time_progress_timestamp),
-                            time_progress))
+                            (str(job_progress_timestamp),
+                             job_progress,
+                             str(time_progress_timestamp),
+                             time_progress))
 
             if self.check_measurements_are_new(job_progress_timestamp,
                                                time_progress_timestamp):

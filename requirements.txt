@@ -2,6 +2,7 @@ virtualenv
 six
 werkzeug
 ConfigParser
+flake8
 Flask
 kubernetes
 redis
