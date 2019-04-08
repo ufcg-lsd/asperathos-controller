@@ -13,13 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
+import copy
 import threading
+import unittest
 
+from controller.exceptions import api as ex
+from controller.plugins.controller.kubejobs.alarm import KubeJobs
 from controller.plugins.controller.kubejobs.plugin import KubejobsController
 from controller.test.unit.mocks.actuator_mock import ActuatorMock
 from controller.test.unit.mocks.metric_source_mock import MetricSourceMock
-from controller.plugins.controller.kubejobs.alarm import KubeJobs
 
 """
 Class that tests the KubeJobsController components.
@@ -33,18 +35,17 @@ class TestKubeJobsController(unittest.TestCase):
     """
 
     def setUp(self):
-        parameters = {"control_parameters": {
-            "check_interval": 2,
-            "trigger_down": 1,
-            "trigger_up": 1,
-            "min_rep": 2,
-            "max_rep": 10,
-            "actuation_size": 3,
-            "actuator": "nop",
-            "metric_source": "redis",
-            "redis_ip": "192.168.0.0",
-            "redis_port": "5000"
-        },
+        self.parameters = {
+            "control_parameters": {
+                "check_interval": 2,
+                "trigger_down": 1,
+                "trigger_up": 1,
+                "min_rep": 2,
+                "max_rep": 10,
+                "actuation_size": 3,
+                "actuator": "nop",
+                "metric_source": "redis"
+            },
             "redis_ip": "192.168.0.0",
             "redis_port": "5000"
         }
@@ -65,7 +66,7 @@ class TestKubeJobsController(unittest.TestCase):
                                           actuation_size,
                                           application_id)
 
-        self.controller = KubejobsController(application_id, parameters)
+        self.controller = KubejobsController(application_id, self.parameters)
         self.controller.alarm = alarm
 
     """
@@ -109,3 +110,23 @@ class TestKubeJobsController(unittest.TestCase):
                 self.controller.stop_application_scaling()
 
         self.assertEqual("Scaling from 1 to 4", self.controller.status())
+
+    def test_wrong_request_body(self):
+
+        """
+        Asserts that a BadRequestException will occur if
+        one of the parameters is missing
+        Args: None
+        Returns: None
+        """
+        application_id = "000002"
+        request_error_counter = len(self.parameters["control_parameters"])
+        for key in self.parameters["control_parameters"]:
+            parameters_test = copy.deepcopy(self.parameters)
+            del parameters_test["control_parameters"][key]
+            try:
+                KubejobsController(application_id, parameters_test)
+            except ex.BadRequestException:
+                request_error_counter -= 1
+
+        self.assertEqual(request_error_counter, 0)
