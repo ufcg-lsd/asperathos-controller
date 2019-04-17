@@ -16,6 +16,9 @@
 import threading
 import time
 
+import six
+
+from controller.exceptions import api as ex
 from controller.plugins.actuator.builder import ActuatorBuilder
 from controller.plugins.controller.base import Controller
 from controller.plugins.metric_source.builder import MetricSourceBuilder
@@ -30,6 +33,7 @@ from controller.utils.logger import ScalingLog
 class KubejobsController(Controller):
 
     def __init__(self, application_id, parameters):
+        self.validate(parameters["control_parameters"])
         self.logger = ScalingLog(
             "diff.controller.log", "controller.log", application_id)
         scaling_parameters = parameters["control_parameters"]
@@ -88,3 +92,31 @@ class KubejobsController(Controller):
 
     def status(self):
         return self.alarm.status()
+
+    def validate(self, data):
+        data_model = {
+            "actuation_size": int,
+            "actuator": six.string_types,
+            "check_interval": int,
+            "max_rep": int,
+            "metric_source": six.string_types,
+            "min_rep": int,
+            "trigger_down": int,
+            "trigger_up": int
+        }
+
+        for key in data_model:
+            if (key not in data):
+                raise ex.BadRequestException(
+                    "Variable \"{}\" is missing".format(key))
+            if (not isinstance(data[key], data_model[key])):
+                raise ex.BadRequestException(
+                    "\"{}\" has unexpected variable type: {}. Was expecting {}"
+                    .format(key, type(data[key]), data_model[key]))
+
+        if (not data["min_rep"] > 0):
+            raise ex.BadRequestException(
+                "Variable \"min_rep\" must be greater than 0")
+        if (not data["min_rep"] <= data["max_rep"]):
+            raise ex.BadRequestException(
+                "Variable \"max_rep\" must be greater than \"min_rep\"")

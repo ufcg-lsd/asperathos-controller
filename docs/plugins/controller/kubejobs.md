@@ -61,7 +61,6 @@ In order to execute the plugin, a JSON needs to be correctly configurate with al
       "config_id":"id",
       "control_plugin":"kubejobs",
       "control_parameters":{  
-         "max_size":9,
          "actuator":"k8s_replicas",
          "check_interval":5,
          "trigger_down":0,
