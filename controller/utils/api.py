@@ -81,6 +81,7 @@ class Rest(flask.Blueprint):
                 except ex.BadRequestException as e:
                     return bad_request(e)
                 except Exception as e:
+                    LOG.log(str(e))
                     return internal_error(500, 'Internal Server Error', e)
 
             self.add_url_rule(rule, endpoint, handler, **options)

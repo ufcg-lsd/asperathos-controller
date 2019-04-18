@@ -38,8 +38,11 @@ class ExternalApi:
         Returns:
             string -- The API address.
         """
+        try:
+            kube.config.load_kube_config(self.k8s_manifest)
+        except Exception:
+            raise Exception("Couldn't load kube config")
 
-        kube.config.load_kube_config(self.k8s_manifest)
         CoreV1Api = kube.client.CoreV1Api()
         api_address = CoreV1Api.list_node(
         ).items[0].status.addresses[0].address
