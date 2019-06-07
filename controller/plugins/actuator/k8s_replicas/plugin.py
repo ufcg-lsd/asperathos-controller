@@ -22,12 +22,11 @@ from controller.utils.logger import Log
 class K8sActuator:
 
     def __init__(self, app_id, k8s_manifest):
-        # load config from default location (~/.kube/config)
+
         try:
             config.load_kube_config(k8s_manifest)
         except Exception:
             raise Exception("Couldn't load kube config")
-        # api instance
         self.k8s_api = client.BatchV1Api()
         self.app_id = app_id
         self.logger = Log("basic.controller.log", "controller.log")

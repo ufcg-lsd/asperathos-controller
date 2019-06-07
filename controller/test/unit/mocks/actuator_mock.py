@@ -39,6 +39,9 @@ class ActuatorMock():
     def get_number_of_replicas(self):
         return self.replicas
 
+    def get_metric(self):
+        return self.replicas
+
     """
     Simulate the behavior of the function get_number_of_replicas
     of Actuator.

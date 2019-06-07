@@ -7,6 +7,12 @@ pipeline {
         sh 'tox -e py27 -r'
       }
     }
+    stage('Pep8') {
+      agent any
+      steps {
+        sh 'tox -epep8 -r'
+      }
+    }
     stage('Integration') {
       agent any
       steps {

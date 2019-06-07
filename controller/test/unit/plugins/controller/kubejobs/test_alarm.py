@@ -32,29 +32,42 @@ class TestKubeJobs(unittest.TestCase):
     """
 
     def setUp(self):
-        metric_source_1 = MetricSourceMock("2018-11-26T15:00:00.000Z", -2)
-        actuator = ActuatorMock()
-        trigger_down = 1
-        trigger_up = 1
-        min_cap = 2
-        max_cap = 10
-        actuation_size = 3
-        application_id_1 = "00001"
+        data1 = {"metric_source": "redis",
+                 "schedule_strategy": "default",
+                 "actuator": 'nop',
+                 "trigger_down": 0,
+                 "trigger_up": 0,
+                 "min_rep": 1,
+                 "max_rep": 10,
+                 "actuation_size": 1}
 
-        application_id_2 = "00002"
-        metric_source_2 = MetricSourceMock("2017-08-06T07:00:00.000Z", 0.0002)
+        data2 = {"metric_source": 'redis',
+                 "schedule_strategy": "default",
+                 "actuator": "nop",
+                 "trigger_down": 0,
+                 "trigger_up": 0,
+                 "min_rep": 1,
+                 "max_rep": 10,
+                 "actuation_size": 1}
 
-        self.kubejobs1 = KubeJobs(actuator, metric_source_1,
-                                  trigger_down, trigger_up,
-                                  min_cap, max_cap,
-                                  actuation_size,
-                                  application_id_1)
+        self.kubejobs1 = KubeJobs({"redis_ip": "0.0.0.0",
+                                   "redis_port": "2352",
+                                   "application_id": "00001",
+                                   "control_parameters": data1})
 
-        self.kubejobs2 = KubeJobs(actuator, metric_source_2,
-                                  trigger_down, trigger_up,
-                                  min_cap, max_cap,
-                                  actuation_size,
-                                  application_id_2)
+        self.kubejobs2 = KubeJobs({"redis_ip": "0.0.0.0",
+                                   "redis_port": "2352",
+                                   "application_id": "00002",
+                                   "control_parameters": data2})
+
+        self.kubejobs1.metric_source = \
+            MetricSourceMock("2017-08-06T07:00:00.000Z", -2)
+        self.kubejobs1.actuator = ActuatorMock()
+        # self.kubejobs1.scheduler = SchedulerMock()
+        self.kubejobs2.metric_source = \
+            MetricSourceMock("2018-11-26T15:00:00.000Z", 0.0002)
+        self.kubejobs2.actuator = ActuatorMock()
+        # self.kubejobs2.scheduler = SchedulerMock()
 
     """
     """
@@ -80,34 +93,19 @@ class TestKubeJobs(unittest.TestCase):
 
         self.assertTrue(final_replicas2 == initial_replicas2)
 
-    """
-    Test that the scale down works, decreasing the number of replicas.
-    """
-
-    def test_scale_down(self):
-        self.kubejobs1.actuator.replicas = 10
-
-        self.kubejobs1._scale_down(2)
-        self.assertEqual(self.kubejobs1.actuator.get_number_of_replicas(), 7)
-
-        self.kubejobs1._scale_down(2)
+    def test_scale(self):
+        self.kubejobs1.actuator.adjust_resources(4)
         self.assertEqual(self.kubejobs1.actuator.get_number_of_replicas(), 4)
 
-        self.kubejobs1._scale_down(2)
+        self.kubejobs1.actuator.\
+            adjust_resources(self.kubejobs1.actuator.
+                             get_number_of_replicas() - 2)
         self.assertEqual(self.kubejobs1.actuator.get_number_of_replicas(), 2)
 
-    """
-    Test that the scale down works, increasing the number of replicas.
-    """
+        self.kubejobs1.actuator.\
+            adjust_resources(self.kubejobs1.actuator.
+                             get_number_of_replicas() + 8)
 
-    def test_scale_up(self):
-        self.kubejobs1._scale_up(-2)
-        self.assertEqual(self.kubejobs1.actuator.get_number_of_replicas(), 4)
-
-        self.kubejobs1._scale_up(-2)
-        self.assertEqual(self.kubejobs1.actuator.get_number_of_replicas(), 7)
-
-        self.kubejobs1._scale_up(-2)
         self.assertEqual(self.kubejobs1.actuator.get_number_of_replicas(), 10)
 
     """
@@ -116,13 +114,13 @@ class TestKubeJobs(unittest.TestCase):
     """
 
     def test_get_progress_error(self):
-        self.assertEqual(self.kubejobs1._get_progress_error("00001"),
+        self.assertEqual(self.kubejobs2._get_progress_error("00001"),
                          (datetime.strptime("2018-11-26T15:00:00.000Z",
-                                            '%Y-%m-%dT%H:%M:%S.%fZ'), -2))
-
-        self.assertEqual(self.kubejobs2._get_progress_error("00002"),
-                         (datetime.strptime("2017-08-06T07:00:00.000Z",
                                             '%Y-%m-%dT%H:%M:%S.%fZ'), 0.0002))
+
+        self.assertEqual(self.kubejobs1._get_progress_error("00002"),
+                         (datetime.strptime("2017-08-06T07:00:00.000Z",
+                                            '%Y-%m-%dT%H:%M:%S.%fZ'), -2))
 
     """
     Test that the function _check_measurements_are_new works correctly.
@@ -145,21 +143,23 @@ class TestKubeJobs(unittest.TestCase):
     def test_status(self):
         self.kubejobs1.metric_source = MetricSourceMock(
             "2018-11-26T15:00:00.000Z", 0.0001)
+
         initial_state1 = ""
+        self.assertEqual(self.kubejobs1.status(), initial_state1)
+
         final_state1 = "Progress error-[%s]-%f" % \
             self.kubejobs1._get_progress_error("00001")
-
-        self.assertEqual(self.kubejobs1.status(), initial_state1)
         self.kubejobs1.check_application_state()
         self.assertEqual(self.kubejobs1.status(), final_state1)
 
         self.kubejobs2.metric_source = MetricSourceMock(
             "0001-01-01T00:00:00.0Z", 0.0002)
+
         initial_state2 = ""
+        self.assertEqual(self.kubejobs2.status(), initial_state2)
+
         final_state2 = "Progress error-[%s]-%f" % \
             self.kubejobs2._get_progress_error("00002") \
             + " Could not acquire more recent metrics"
-
-        self.assertEqual(self.kubejobs2.status(), initial_state2)
         self.kubejobs2.check_application_state()
         self.assertEqual(self.kubejobs2.status(), final_state2)
