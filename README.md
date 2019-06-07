@@ -49,18 +49,11 @@ Endpoints are avaliable on [restapi-endpoints.md](docs/restapi-endpoints.md) doc
 
 ## Avaliable plugins
 ### Controller
-* [Progress error](docs/plugins/controller/progress-error.md)
-* [Proportional](docs/plugins/controller/proportional-controller.md)
-* [Proportional derivative](docs/plugins/controller/proportional-derivative-controller.md)
-* [Proportional integrative derivative](docs/plugins/controller/proportional-derivative-controller.md)
 * [Kube Jobs](docs/plugins/controller/kubejobs.md)
-* [Vertical](docs/plugins/controller/vertical-controller.md)
 
 ### Actuator
-* [KVM](docs/plugins/actuator/kvm-actuator.md)
-* [KVM I/O](docs/plugins/actuator/kvm-io-actuator.md)
 * [K8s Replicas](docs/plugins/actuator/k8s-replicas.md)
-* [External API](docs/plugins/actuator/external-api.md)
 
 ### Metric source
 * [Monasca](docs/plugins/metric_source/monasca-metric-source.md)
+* [Redis]

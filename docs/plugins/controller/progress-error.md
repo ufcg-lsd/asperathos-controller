@@ -18,7 +18,7 @@
     "password":"password",
     "plugin":"progress_error",
     "plugin_info":{
-        "actuator":"kvm",
+        "actuator":"k8s-replicas",
         "metric_source":"monasca",
         "instances":["6f9fe95f-9072-4545-a62a-fc5fd7cae9a4", "45034c39-c280-4047-8b92-a8efb61bc589"],
         "check_interval":10,
