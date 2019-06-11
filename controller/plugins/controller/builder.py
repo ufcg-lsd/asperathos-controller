@@ -32,6 +32,7 @@ from controller.plugins.controller.kubejobs.plugin import KubejobsController
 from controller.plugins.controller.vertical.plugin import VerticalController
 from controller.plugins.metric_source.builder import MetricSourceBuilder
 from controller.plugins.actuator.builder import ActuatorBuilder
+from controller.service import plugin_service
 
 
 class ControllerBuilder:
@@ -78,5 +79,7 @@ class ControllerBuilder:
             return VerticalController(app_id, plugin_info)
 
         else:
-            # FIXME: exception type
-            raise Exception("Unknown controller type")
+            try:
+                return plugin_service.get_plugin(name)
+            except Exception:
+                raise Exception("Unknown actuator type")

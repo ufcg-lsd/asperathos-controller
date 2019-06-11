@@ -30,6 +30,7 @@ from controller.utils.locator.service_instance import ServiceInstanceLocator
 
 from controller.utils.remote.kvm import RemoteKVM
 from controller.utils.remote.kvm_tunnel import RemoteKVMTunnel
+from controller.service import plugin_service
 
 
 class ActuatorBuilder:
@@ -144,5 +145,7 @@ class ActuatorBuilder:
             return NopActuator()
 
         else:
-            # FIXME: review this exception type
-            raise Exception("Unknown actuator type")
+            try:
+                return plugin_service.get_plugin(name)
+            except Exception:
+                raise Exception("Unknown actuator type")
