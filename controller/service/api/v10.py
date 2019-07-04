@@ -15,6 +15,7 @@
 
 from controller.plugins.actuator.builder import ActuatorBuilder
 from controller.plugins.controller.builder import ControllerBuilder
+from controller.service import plugin_service
 from controller.utils.logger import Log
 from controller.exceptions import api as ex
 from threading import Thread
@@ -26,6 +27,13 @@ scaled_apps = {}
 
 controller_builder = ControllerBuilder()
 actuator_builder = ActuatorBuilder()
+
+
+def install_plugin(source, plugin):
+    status = plugin_service.install_plugin(source, plugin)
+    if status:
+        return {"message": "Plugin installed successfully"}, 200
+    return {"message": "Error installing plugin"}, 400
 
 
 def setup_environment(data):
