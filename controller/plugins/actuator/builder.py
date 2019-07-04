@@ -17,6 +17,7 @@ import controller.service.api as api
 
 from controller.plugins.actuator.k8s_replicas.plugin import K8sActuator
 from controller.plugins.actuator.nop.plugin import NopActuator
+from controller.service import plugin_service
 
 
 class ActuatorBuilder:
@@ -31,5 +32,7 @@ class ActuatorBuilder:
             return NopActuator()
 
         else:
-            # FIXME: review this exception type
-            raise Exception("Unknown actuator type")
+            try:
+                return plugin_service.get_plugin(name)
+            except Exception:
+                raise Exception("Unknown actuator type")

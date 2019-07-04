@@ -19,9 +19,7 @@ import time
 import six
 
 from controller.exceptions import api as ex
-from controller.plugins.actuator.builder import ActuatorBuilder
 from controller.plugins.controller.base import Controller
-from controller.plugins.metric_source.builder import MetricSourceBuilder
 from controller.plugins.controller.kubejobs.alarm import KubeJobs
 from controller.utils.logger import ScalingLog
 
@@ -36,38 +34,19 @@ class KubejobsController(Controller):
         self.validate(parameters["control_parameters"])
         self.logger = ScalingLog(
             "diff.controller.log", "controller.log", application_id)
-        scaling_parameters = parameters["control_parameters"]
         self.application_id = application_id
         parameters.update({"app_id": application_id})
         # read scaling parameters
-        self.check_interval = scaling_parameters["check_interval"]
-        self.trigger_down = scaling_parameters["trigger_down"]
-        self.trigger_up = scaling_parameters["trigger_up"]
-        self.min_cap = scaling_parameters["min_rep"]
-        self.max_cap = scaling_parameters["max_rep"]
-        self.actuation_size = scaling_parameters["actuation_size"]
-        # The actuator plugin name
-        self.actuator_type = scaling_parameters["actuator"]
-        # The metric source plugin name
-        self.metric_source_type = scaling_parameters["metric_source"]
-
+        self.check_interval = \
+            parameters["control_parameters"]["check_interval"]
         # We use a lock here to prevent race conditions when stopping the
         # controller
         self.running = True
         self.running_lock = threading.RLock()
 
-        # Gets a new metric source plugin using the given name
-        metric_source = MetricSourceBuilder().get_metric_source(
-            self.metric_source_type, parameters)
-        # Gets a new actuator plugin using the given name
-        actuator = ActuatorBuilder().get_actuator(self.actuator_type,
-                                                  parameters=parameters)
         # The alarm here is responsible for deciding whether to scale up or
         # down, or even do nothing
-        self.alarm = KubeJobs(actuator, metric_source,
-                              self.trigger_down, self.trigger_up,
-                              self.min_cap, self.max_cap, self.actuation_size,
-                              application_id)
+        self.alarm = KubeJobs(parameters)
 
     def start_application_scaling(self):
         run = True
@@ -95,14 +74,10 @@ class KubejobsController(Controller):
 
     def validate(self, data):
         data_model = {
-            "actuation_size": int,
             "actuator": six.string_types,
             "check_interval": int,
-            "max_rep": int,
             "metric_source": six.string_types,
-            "min_rep": int,
-            "trigger_down": int,
-            "trigger_up": int
+            "schedule_strategy": six.string_types
         }
 
         for key in data_model:
@@ -113,10 +88,3 @@ class KubejobsController(Controller):
                 raise ex.BadRequestException(
                     "\"{}\" has unexpected variable type: {}. Was expecting {}"
                     .format(key, type(data[key]), data_model[key]))
-
-        if (not data["min_rep"] > 0):
-            raise ex.BadRequestException(
-                "Variable \"min_rep\" must be greater than 0")
-        if (not data["min_rep"] <= data["max_rep"]):
-            raise ex.BadRequestException(
-                "Variable \"max_rep\" must be greater than \"min_rep\"")

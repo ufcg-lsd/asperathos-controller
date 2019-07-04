@@ -1,4 +1,4 @@
-# Copyright (c) 2017 LSD - UFCG.
+# Copyright (c) 2017 UFCG-LSD.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,23 +13,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import abc
+import six
 
-from controller.plugins.controller.kubejobs.plugin import KubejobsController
-from controller.service import plugin_service
+
+def required(fun):
+    return abc.abstractmethod(fun)
 
 
-class ControllerBuilder:
+@six.add_metaclass(abc.ABCMeta)
+class SchedulerBase(object):
 
-    def __init__(self):
+    @required
+    def scale(self, info):
         pass
 
-    def get_controller(self, name, app_id, plugin_info):
-
-        if name == "kubejobs":
-            return KubejobsController(app_id, plugin_info)
-
-        else:
-            try:
-                return plugin_service.get_plugin(name)
-            except Exception:
-                raise Exception("Unknown actuator type")
+    @required
+    def validate(self, data):
+        pass

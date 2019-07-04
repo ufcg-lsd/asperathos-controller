@@ -35,39 +35,31 @@ class TestKubeJobsController(unittest.TestCase):
     """
 
     def setUp(self):
+        application_id = "000001"
+
         self.parameters = {
             "control_parameters": {
-                "check_interval": 2,
+                "metric_source": "redis",
+                "schedule_strategy": "default",
+                "actuator": 'nop',
                 "trigger_down": 1,
                 "trigger_up": 1,
                 "min_rep": 2,
                 "max_rep": 10,
-                "actuation_size": 3,
-                "actuator": "nop",
-                "metric_source": "redis"
-            },
+                "check_interval": 1,
+                "actuation_size": 3},
             "redis_ip": "192.168.0.0",
-            "redis_port": "5000"
+            "redis_port": "5000",
+            "application_id": application_id
         }
 
-        application_id = "000001"
-
-        metric_source_1 = MetricSourceMock("2018-11-26T15:00:00.000Z", -2)
-        actuator = ActuatorMock()
-        trigger_down = 1
-        trigger_up = 1
-        min_cap = 2
-        max_cap = 10
-        actuation_size = 3
-
-        alarm = self.kubejobs1 = KubeJobs(actuator, metric_source_1,
-                                          trigger_down, trigger_up,
-                                          min_cap, max_cap,
-                                          actuation_size,
-                                          application_id)
+        self.kubejobs1 = KubeJobs(self.parameters)
+        self.kubejobs1.metric_source = \
+            MetricSourceMock("2018-11-26T15:00:00.000Z", -2)
+        self.kubejobs1.actuator = ActuatorMock()
 
         self.controller = KubejobsController(application_id, self.parameters)
-        self.controller.alarm = alarm
+        self.controller.alarm = self.kubejobs1
 
     """
     """
@@ -109,7 +101,8 @@ class TestKubeJobsController(unittest.TestCase):
             if self.controller.running:
                 self.controller.stop_application_scaling()
 
-        self.assertEqual("Scaling from 1 to 4", self.controller.status())
+        self.assertEqual("Progress error-[2018-11-26 15:00:00]--2.000000",
+                         self.controller.status())
 
     def test_wrong_request_body(self):
 
@@ -129,4 +122,4 @@ class TestKubeJobsController(unittest.TestCase):
             except ex.BadRequestException:
                 request_error_counter -= 1
 
-        self.assertEqual(request_error_counter, 0)
+        self.assertEqual(request_error_counter, 1)

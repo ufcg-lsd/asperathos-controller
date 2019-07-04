@@ -60,7 +60,8 @@ In order to execute the plugin, a JSON needs to be correctly configurate with al
       "redis_workload":"workload",
       "config_id":"id",
       "control_plugin":"kubejobs",
-      "control_parameters":{  
+      "control_parameters":{ 
+         "schedule_strategy": "pid",
          "actuator":"k8s_replicas",
          "check_interval":5,
          "trigger_down":0,
@@ -69,6 +70,11 @@ In order to execute the plugin, a JSON needs to be correctly configurate with al
          "max_rep":10,
          "actuation_size":1,
          "metric_source":"redis"
+         "heuristic_options": {
+            	"proportional_gain": 0.1,
+            	"derivative_gain": 0,
+            	"integral_gain": 0
+            }
       },
       "monitor_plugin":"kubejobs",
       "monitor_info":{  

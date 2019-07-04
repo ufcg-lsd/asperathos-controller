@@ -19,3 +19,4 @@ pytz
 pytest
 tzlocal
 mock
+urllib3==1.22

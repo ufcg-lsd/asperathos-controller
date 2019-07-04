@@ -36,7 +36,7 @@ class Log:
 
 
 class ScalingLog:
-    def __init__(self, name, output_file_path, application_id):
+    def __init__(self, name, output_file_path, application_id=""):
         self.application_id = application_id
         self.logger = Log(name, output_file_path)
 

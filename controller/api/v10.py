@@ -21,6 +21,14 @@ from controller.service.api import v10 as api
 rest = u.Rest('v10', __name__)
 
 
+@rest.post('/plugins')
+def install_plugin(data):
+    plugin_repo = data.get('plugin_source')
+    source = data.get('install_source')
+    response, status = api.install_plugin(source, plugin_repo)
+    return u.render(response), status
+
+
 """ Setup environment.
 
     Normal response codes: 204

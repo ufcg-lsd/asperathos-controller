@@ -1,4 +1,4 @@
-# Copyright (c) 2017 LSD - UFCG.
+# Copyright (c) 2019 UFCG-LSD.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,22 +14,7 @@
 # limitations under the License.
 
 
-from controller.plugins.controller.kubejobs.plugin import KubejobsController
-from controller.service import plugin_service
+class SchedulerMock(object):
 
-
-class ControllerBuilder:
-
-    def __init__(self):
+    def scale(self, info):
         pass
-
-    def get_controller(self, name, app_id, plugin_info):
-
-        if name == "kubejobs":
-            return KubejobsController(app_id, plugin_info)
-
-        else:
-            try:
-                return plugin_service.get_plugin(name)
-            except Exception:
-                raise Exception("Unknown actuator type")
