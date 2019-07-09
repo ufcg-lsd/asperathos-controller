@@ -36,15 +36,6 @@ try:
         if plugin != '' and plugin not in config.sections():
             raise Exception("plugin '%s' section missing" % plugin)
 
-    if 'kvm_io' in actuator_plugins:
-        compute_nodes_str = config.get("kvm_io", "compute_nodes")
-        compute_nodes_keypair = config.get("kvm_io", "key_pair")
-        iops_reference = config.getint("kvm_io", "iops_reference")
-        bs_reference = config.getint("kvm_io", "bs_reference")
-        default_io_cap = config.getint("kvm_io", "default_io_cap")
-        tunelling = config.get("kvm_io", "tunelling")
-        ports_str = config.get("kvm_io", "tunnel_ports")
-
     if 'monasca' in metric_source_plugins:
         monasca_endpoint = config.get('monasca', 'monasca_endpoint')
         monasca_username = config.get('monasca', 'username')
@@ -62,21 +53,6 @@ try:
         if(config.has_section('k8s_replicas')):
             if(config.has_option('k8s_replicas', 'k8s_manifest')):
                 k8s_manifest = config.get("k8s_replicas", "k8s_manifest")
-
-    if 'service' in actuator_plugins:
-        actuator_port = config.get("service", "actuator_port")
-
-    if 'external_api' in actuator_plugins:
-
-        # Setting default value
-        k8s_manifest = "./data/conf"
-
-        # If explicitly stated in the cfg file, overwrite the variable
-        if(config.has_section('external_api')):
-            if(config.has_option('external_api', 'k8s_manifest')):
-                k8s_manifest = config.get("external_api", "k8s_manifest")
-
-        actuator_metric = config.get('external_api', 'actuator_metric')
 
 except Exception as e:
     print "Error: %s" % e.message
