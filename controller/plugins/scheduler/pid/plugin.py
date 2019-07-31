@@ -58,12 +58,16 @@ class PidScheduler(SchedulerBase):
 
         integrative_component = -1 * self.integrated_error * self.integral_gain
 
-        new_rep = replicas + proportional_component + \
-            derivative_component + integrative_component
-        new_rep = max(min(new_rep, self.max_rep), self.min_rep)
+        calculated_action = int(proportional_component +
+                                derivative_component + integrative_component)
+
+        total_rep = replicas + calculated_action
+
+        new_rep = max(min(total_rep, self.max_rep), self.min_rep)
 
         self.last_error = error
-        return int(new_rep)
+
+        return new_rep
 
     def validate(self, data):
 
