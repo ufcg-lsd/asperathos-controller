@@ -21,8 +21,8 @@ from controller.service import plugin_service
 
 
 class ActuatorBuilder:
-    def get_actuator(self, name, parameters={}):
-
+    def get_actuator(self, plugin, parameters={}):
+        name = plugin['name']
         if name == "k8s_replicas":
             actuator = K8sActuator(parameters['app_id'],
                                    api.k8s_manifest)
@@ -33,6 +33,7 @@ class ActuatorBuilder:
 
         else:
             try:
-                return plugin_service.get_plugin(name)
-            except Exception:
-                raise Exception("Unknown actuator type")
+                return plugin_service.get_plugin(plugin['module'])
+            except ImportError:
+                plugin_service.install_plugin(plugin['source'], plugin['plugin_source'])
+                return plugin_service.get_plugin(plugin['module'])

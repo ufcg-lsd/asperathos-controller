@@ -23,13 +23,14 @@ class ControllerBuilder:
     def __init__(self):
         pass
 
-    def get_controller(self, name, app_id, plugin_info):
+    def get_controller(self, plugin, app_id, plugin_info):
 
-        if name == "kubejobs":
+        if plugin['name'] == "kubejobs":
             return KubejobsController(app_id, plugin_info)
 
         else:
             try:
-                return plugin_service.get_plugin(name)
-            except Exception:
-                raise Exception("Unknown actuator type")
+                return plugin_service.get_plugin(plugin['module'])
+            except ImportError:
+                plugin_service.install_plugin(plugin['source'], plugin['plugin_source'])
+                return plugin_service.get_plugin(plugin['module'])
