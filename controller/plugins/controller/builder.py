@@ -32,4 +32,4 @@ class ControllerBuilder:
             try:
                 return plugin_service.get_plugin(name)(app_id, plugin_info)
             except Exception:
-                raise Exception("Unknown actuator type")
+                raise Exception("Unknown controller type")
