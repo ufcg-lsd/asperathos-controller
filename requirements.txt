@@ -1,7 +1,7 @@
 virtualenv
 six
 werkzeug
-ConfigParser
+configparser
 flake8
 Flask
 kubernetes

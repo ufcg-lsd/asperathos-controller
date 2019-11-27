@@ -79,10 +79,8 @@ class GenericController(Controller):
                 self.alarm.check_application_state()
             except MetricNotFoundException:
                 self.logger.log("No metrics available")
-                print "No metrics avaliable"
             except Exception as e:
                 self.logger.log(str(e))
-                print "Unknown " + str(e)
 
             # Wait some time
             time.sleep(float(self.check_interval))

@@ -18,20 +18,22 @@ import datetime
 import redis
 
 from controller.plugins.metric_source.base import MetricSource
+from controller.utils.logger import Log
 
 
 class RedisMetricSource(MetricSource):
     def __init__(self, parameters):
-        print parameters['redis_ip'], parameters['redis_port']
         self.rds = redis.StrictRedis(host=parameters['redis_ip'],
                                      port=parameters['redis_port'])
+        self.LOG = Log('redis_log', 'redis.log')
         self.last_metric = 0.0
         self.last_timestamp = datetime.datetime.now()
 
     def get_most_recent_value(self, app_id):
         measurement = self.rds.rpop("%s:metrics" % app_id)
-        print "\n%s\n%s\n\n" % (measurement, app_id)
+        self.LOG.log("\n%s\n%s\n\n" % (measurement, app_id))
         if measurement is not None:
+            measurement = str(measurement, 'utf-8')
             measurement = ast.literal_eval(measurement)
             timestamp = datetime.datetime.fromtimestamp(
                 measurement['timestamp'] / 1000)

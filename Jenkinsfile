@@ -4,7 +4,7 @@ pipeline {
     stage('Unit') {
       agent any
       steps {
-        sh 'tox -e py27 -r'
+        sh 'tox -e py37 -r'
       }
     }
     stage('Pep8') {

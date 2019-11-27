@@ -13,11 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import ConfigParser
+import configparser
+from controller.utils.logger import Log
+
+LOG = Log('api_log', 'api.log')
 
 try:
     # Conf reading
-    config = ConfigParser.RawConfigParser()
+    config = configparser.RawConfigParser()
     config.read('./controller.cfg')
 
     """ General configuration """
@@ -55,5 +58,5 @@ try:
                 k8s_manifest = config.get("k8s_replicas", "k8s_manifest")
 
 except Exception as e:
-    print "Error: %s" % e.message
+    LOG.log("Error: %s" % e)
     quit()

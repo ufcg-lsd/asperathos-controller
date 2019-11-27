@@ -18,6 +18,7 @@ from monascaclient import exc
 from monascaclient import client as monclient, ksclient
 from controller.service import api
 from controller.exceptions.monasca import MetricNotFoundException
+from controller.utils.logger import Log
 
 
 class MonascaClient:
@@ -28,6 +29,7 @@ class MonascaClient:
         self.monasca_project_name = api.monasca_project_name
         self.monasca_api_version = api.monasca_api_version
         self._get_monasca_client()
+        self.LOG = Log('monasca_client_log', 'monasca_client.log')
 
     def get_measurements(self, metric_name, dimensions,
                          start_time='2014-01-01T00:00:00Z'):
@@ -40,9 +42,9 @@ class MonascaClient:
                 name=metric_name, dimensions=dimensions,
                 start_time=start_time, debug=False)
         except exc.HTTPException as httpex:
-            print httpex.message
+            self.LOG.log(httpex)
         except Exception as ex:
-            print ex.message
+            self.LOG.log(ex)
         if len(measurements) > 0:
             return measurements[0]['measurements']
         else:
@@ -88,6 +90,6 @@ class MonascaClient:
             monasca_client = self._get_monasca_client()
             monasca_client.metrics.create(**batch_metrics)
         except exc.HTTPException as httpex:
-            print httpex.message
+            self.LOG.log(httpex)
         except Exception as ex:
-            print ex.message
+            self.LOG.log(ex)
