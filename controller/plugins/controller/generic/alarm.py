@@ -84,10 +84,6 @@ class GenericAlarm:
                                            str(self.application_id),
                                            str(self.cap)))
 
-                    print("%.0f|%s|%s" % (time.time(),
-                                          str(self.application_id),
-                                          str(self.cap)))
-
                 self.last_error = error
                 self.last_error_timestamp = error_timestamp
 
