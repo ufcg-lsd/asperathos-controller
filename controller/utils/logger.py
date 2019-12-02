@@ -29,6 +29,7 @@ class Log:
             self.logger.addHandler(handler)
             handler = logging.FileHandler(output_file_path)
             self.logger.addHandler(handler)
+            self.logger.propagate = False
 
     def log(self, text):
         if global_enabled:
