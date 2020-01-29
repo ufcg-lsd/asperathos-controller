@@ -41,8 +41,8 @@ class RedisMetricSource(MetricSource):
             if timestamp > self.last_timestamp:
                 self.last_timestamp = timestamp
                 self.last_metric = value
-                return timestamp, 100 * value
+                return timestamp, value
             else:
-                return self.last_timestamp, 100 * self.last_metric
+                return self.last_timestamp, self.last_metric
         else:
-            return self.last_timestamp, 100 * self.last_metric
+            return self.last_timestamp, self.last_metric
