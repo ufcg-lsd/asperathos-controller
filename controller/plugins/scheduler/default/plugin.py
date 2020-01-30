@@ -60,6 +60,21 @@ class DefaultScheduler(SchedulerBase):
                     "\"{}\" has unexpected variable type: {}. Was expecting {}"
                     .format(key, type(data[key]), data_model[key]))
 
+        if not (data['trigger_up'] isinstance(int)
+                or data['trigger_up'] isinstance(float)):
+            raise ex.BadRequestException(
+                "\"trigger_up\" has unexpected variable type: {}. Was"
+                " expecting float or int".format(type(data['trigger_up'])))
+
+        if not (data['trigger_down'] isinstance(int) 
+                or data['trigger_down'] isinstance(float)):
+            raise ex.BadRequestException(
+                "\"trigger_down\" has unexpected variable type: {}. Was"
+                " expecting float or int".format(type(data['trigger_down']))
+                
+
+
+
         if (data["min_rep"] < 1):
             raise ex.BadRequestException(
                 "Variable \"min_rep\" must be greater than 0")
