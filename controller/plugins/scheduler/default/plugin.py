@@ -46,9 +46,7 @@ class DefaultScheduler(SchedulerBase):
         data_model = {
             "actuation_size": int,
             "max_rep": int,
-            "min_rep": int,
-            "trigger_down": int,
-            "trigger_up": int,
+            "min_rep": int
         }
 
         for key in data_model:
