@@ -46,9 +46,7 @@ class DefaultScheduler(SchedulerBase):
         data_model = {
             "actuation_size": int,
             "max_rep": int,
-            "min_rep": int,
-            "trigger_down": int,
-            "trigger_up": int,
+            "min_rep": int
         }
 
         for key in data_model:
@@ -59,6 +57,26 @@ class DefaultScheduler(SchedulerBase):
                 raise ex.BadRequestException(
                     "\"{}\" has unexpected variable type: {}. Was expecting {}"
                     .format(key, type(data[key]), data_model[key]))
+
+        if 'trigger_up'not in data:
+            raise ex.BadRequestException(
+                    "Variable \"{}\" is missing".format(key))
+
+        if not (isinstance(data['trigger_up'], int) or
+                isinstance(data['trigger_up'], float)):
+            raise ex.BadRequestException(
+                "\"trigger_up\" has unexpected variable type: {}. Was"
+                " expecting float or int".format(type(data['trigger_up'])))
+
+        if 'trigger_down' not in data:
+            raise ex.BadRequestException(
+                "Variable \"{}\" is missing".format(key))
+
+        if not (isinstance(data['trigger_down'], int) or
+                isinstance(data['trigger_down'], float)):
+            raise ex.BadRequestException(
+                "\"trigger_down\" has unexpected variable type: {}. Was"
+                " expecting float or int".format(type(data['trigger_down'])))
 
         if (data["min_rep"] < 1):
             raise ex.BadRequestException(
