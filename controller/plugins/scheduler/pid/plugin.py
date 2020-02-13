@@ -26,6 +26,7 @@ class PidScheduler(SchedulerBase):
         heuristic_options = data.get('heuristic_options')
         self.max_rep = data.get('max_rep')
         self.min_rep = data.get('min_rep')
+        self.app_id = data.get('app_id')
         self.proportional_gain = heuristic_options["proportional_gain"]
         self.derivative_gain = heuristic_options["derivative_gain"]
         self.integral_gain = heuristic_options["integral_gain"]
@@ -48,19 +49,27 @@ class PidScheduler(SchedulerBase):
 
         proportional_component = -1 * error * self.proportional_gain
 
+        self.logger.log('pid_info|app_id:%s|proportional_component:%f' % (self.app_id, proportional_component))
+
         if self.last_error is None:
             derivative_component = 0
         else:
             derivative_component = -1 * self.derivative_gain * \
                 (error - self.last_error)
 
+        self.logger.log('pid_info|app_id:%s|derivative_component:%f' % (self.app_id, derivative_component))
+        
         self.integrated_error += error
 
         integrative_component = -1 * self.integrated_error * self.integral_gain
 
+        self.logger.log('pid_info|app_id:%s|integral_component:%f' % (self.app_id, integrative_component))
+        
         calculated_action = int(proportional_component +
                                 derivative_component + integrative_component)
 
+        self.logger.log('pid_info|app_id:%s|calculated_action:%d' % (self.app_id, calculated_action))
+        
         total_rep = replicas + calculated_action
 
         new_rep = max(min(total_rep, self.max_rep), self.min_rep)
@@ -68,6 +77,12 @@ class PidScheduler(SchedulerBase):
         self.last_error = error
 
         return new_rep
+
+    def update_gains(self, data):
+        self.proportional_gain = data["proportional_gain"]
+        self.derivative_gain = data["derivative_gain"]
+        self.integral_gain = data["integral_gain"]       
+        self.logger.log("Updated scheduler gains:p(%f)-d(%f)-i(%f)" % (self.proportional_gain, self.derivative_gain, self.integral_gain))
 
     def validate(self, data):
 

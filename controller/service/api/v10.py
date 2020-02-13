@@ -87,3 +87,15 @@ def controller_status():
         status += "\n"
 
     return status
+
+def update_parameters(app_id, data):
+    if app_id in scaled_apps:
+        API_LOG.log("Updating parameters for application id: %s" % (app_id))
+
+        executor = scaled_apps[app_id]
+        executor.update_parameters(data)
+
+    else:
+        raise ex.BadRequestException()
+
+   

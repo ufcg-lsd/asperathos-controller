@@ -114,3 +114,6 @@ class KubeJobs:
 
     def status(self):
         return self.last_action
+
+    def update_parameters(self, data):
+        self.scheduler.update_gains(data)

@@ -69,6 +69,11 @@ class KubejobsController(Controller):
         with self.running_lock:
             self.running = False
 
+    def update_parameters(self, data):
+        with self.running_lock:
+            self.logger.log("Updating controller parameters")
+            self.alarm.update_parameters(data)
+
     def status(self):
         return self.alarm.status()
 
