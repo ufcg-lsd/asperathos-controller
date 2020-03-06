@@ -84,6 +84,10 @@ class PidScheduler(SchedulerBase):
         self.integral_gain = data["integral_gain"]       
         self.logger.log("Updated scheduler gains:p(%f)-d(%f)-i(%f)" % (self.proportional_gain, self.derivative_gain, self.integral_gain))
 
+        if data["reset"]:
+            self.integrated_error = 0
+            self.last_error = None
+
     def validate(self, data):
 
         data_model = {
