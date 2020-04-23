@@ -29,8 +29,8 @@ class RedisMetricSource(MetricSource):
         self.last_metric = 0.0
         self.last_timestamp = datetime.datetime.now()
 
-    def get_most_recent_value(self, app_id):
-        measurement = self.rds.rpop("%s:metrics" % app_id)
+    def get_most_recent_value(self, app_id, metric_queue_name="metrics"):
+        measurement = self.rds.rpop("%s:%s" % (app_id, metric_queue_name))
         self.LOG.log("\n%s\n%s\n\n" % (measurement, app_id))
         if measurement is not None:
             measurement = str(measurement, 'utf-8')
