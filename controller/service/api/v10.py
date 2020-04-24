@@ -52,26 +52,36 @@ def setup_environment(data):
 
 
 def start_scaling(app_id, data):
-    if ('control_plugin' not in data or 'control_parameters' not in data):
+    if 'control_info' not in data:
         API_LOG.log("Missing parameters in request")
         raise ex.BadRequestException()
 
-    plugin = data["control_plugin"]
+    for plugin_key in data['control_info']:
+        API_LOG.log("Creating plugin: %s" % plugin_key)
+        API_LOG.log(data)
+        plugin = data['control_info'][plugin_key]['plugin']
+        plugin_info = data['control_info'][plugin_key]
+        plugin_info['redis_ip'] = data['redis_ip']
+        plugin_info['redis_port'] = data['redis_port']
+        controller = controller_builder.get_controller(plugin, app_id,
+                                                       plugin_info)
+        executor = Thread(target=controller.start_application_scaling)
 
-    controller = controller_builder.get_controller(plugin, app_id,
-                                                   data)
-    executor = Thread(target=controller.start_application_scaling)
+        executor.start()
 
-    executor.start()
-    scaled_apps[app_id] = controller
+        if app_id not in scaled_apps:
+            scaled_apps[app_id] = {}
+        scaled_apps[app_id][plugin_key] = controller
 
 
 def stop_scaling(app_id):
     if app_id in scaled_apps:
         API_LOG.log("Removing application id: %s" % (app_id))
 
-        executor = scaled_apps[app_id]
-        executor.stop_application_scaling()
+        for plugin_key in scaled_apps[app_id]:
+            executor = scaled_apps[app_id][plugin_key]
+            executor.stop_application_scaling()
+
         scaled_apps.pop(app_id)
 
     else:
@@ -83,7 +93,9 @@ def controller_status():
     status += "Monitoring applications:\n"
     for app_id in scaled_apps:
         status += app_id + "\n"
-        status += "Last action:" + scaled_apps[app_id].status()
-        status += "\n"
+        for plugin in scaled_apps[app_id]:
+            status += plugin + "\n"
+            status += "Last action:" + scaled_apps[app_id][plugin].status()
+            status += "\n"
 
     return status

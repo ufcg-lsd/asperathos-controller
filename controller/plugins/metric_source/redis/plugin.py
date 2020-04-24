@@ -25,12 +25,13 @@ class RedisMetricSource(MetricSource):
     def __init__(self, parameters):
         self.rds = redis.StrictRedis(host=parameters['redis_ip'],
                                      port=parameters['redis_port'])
+        self.metric_queue_name = parameters['metric_queue']
         self.LOG = Log('redis_log', 'redis.log')
         self.last_metric = 0.0
         self.last_timestamp = datetime.datetime.now()
 
-    def get_most_recent_value(self, app_id, metric_queue_name="metrics"):
-        measurement = self.rds.rpop("%s:%s" % (app_id, metric_queue_name))
+    def get_most_recent_value(self, app_id):
+        measurement = self.rds.rpop("%s:%s" % (app_id, self.metric_queue_name))
         self.LOG.log("\n%s\n%s\n\n" % (measurement, app_id))
         if measurement is not None:
             measurement = str(measurement, 'utf-8')

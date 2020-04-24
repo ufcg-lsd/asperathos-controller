@@ -31,14 +31,14 @@ from controller.utils.logger import ScalingLog
 class KubejobsController(Controller):
 
     def __init__(self, application_id, parameters):
-        self.validate(parameters["control_parameters"])
+        self.validate(parameters)
         self.logger = ScalingLog(
             "diff.controller.log", "controller.log", application_id)
         self.application_id = application_id
         parameters.update({"app_id": application_id})
         # read scaling parameters
         self.check_interval = \
-            parameters["control_parameters"]["check_interval"]
+            parameters["check_interval"]
         # We use a lock here to prevent race conditions when stopping the
         # controller
         self.running = True

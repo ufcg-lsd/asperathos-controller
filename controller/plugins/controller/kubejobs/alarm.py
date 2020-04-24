@@ -33,7 +33,7 @@ class KubeJobs:
 
     def __init__(self, data):
         # TODO: Check parameters
-        scaling_parameters = data["control_parameters"]
+        scaling_parameters = data
         self.metric_source = MetricSourceBuilder().\
             get_metric_source(scaling_parameters.get('metric_source'), data)
         self.app_id = data.get('app_id')
