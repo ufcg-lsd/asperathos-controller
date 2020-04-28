@@ -15,6 +15,7 @@
 
 
 from controller.plugins.controller.kubejobs.plugin import KubejobsController
+from controller.plugins.controller.kubejobs_multi_error.plugin import KubejobsMultiErrorController
 from controller.service import plugin_service
 
 
@@ -27,7 +28,8 @@ class ControllerBuilder:
 
         if name == "kubejobs":
             return KubejobsController(app_id, plugin_info)
-
+        elif name == "kubejobs_multi_error":
+            return KubejobsMultiErrorController(app_id, plugin_info)
         else:
             try:
                 return plugin_service.get_plugin(name)(app_id, plugin_info)
