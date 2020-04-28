@@ -19,6 +19,7 @@ import time
 from controller.utils.logger import ScalingLog
 from controller.plugins.scheduler.default.plugin import DefaultScheduler
 from controller.plugins.scheduler.pid_multierror_combine_actions.plugin import PidSchedulerMultiErrorCombineActions
+from controller.plugins.scheduler.pid_multierror_combine_errors.plugin import PidSchedulerMultiErrorCombineErrors
 from controller.plugins.metric_source.builder import MetricSourceBuilder
 from controller.plugins.actuator.builder import ActuatorBuilder
 
@@ -65,6 +66,9 @@ class MultiErrorKubeJobs:
 
         elif strategy == "pid_combine_actions":
             return PidSchedulerMultiErrorCombineActions(parameters)
+
+        elif strategy == "pid_combine_errors":
+            return PidSchedulerMultiErrorCombineErrors(parameters)
 
     def setup_actuator(self, parameters):
         actuator = parameters.get('actuator')
