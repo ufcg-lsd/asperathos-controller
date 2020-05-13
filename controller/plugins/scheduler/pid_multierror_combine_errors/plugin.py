@@ -30,6 +30,7 @@ class PidSchedulerMultiErrorCombineErrors(SchedulerBase):
         self.derivative_gain = heuristic_options["derivative_gain"]
         self.integral_gain = heuristic_options["integral_gain"]
         self.alpha = heuristic_options["alpha"]
+        self.correction_factor = heuristic_options["correction_factor"]
         self.last_error = None
         self.integrated_error = 0
 
@@ -48,7 +49,7 @@ class PidSchedulerMultiErrorCombineErrors(SchedulerBase):
         error_list = info.get('error_info')
 
         error0 = error_list[0]
-        error1 = error_list[1]
+        error1 = self.correction_factor * error_list[1]
 
         final_error = self.alpha * error0 + (1 - self.alpha) * error1
         self.logger.log("Final error: %f" % final_error)
