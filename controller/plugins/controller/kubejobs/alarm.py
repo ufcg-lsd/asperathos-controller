@@ -19,6 +19,7 @@ import time
 from controller.utils.logger import ScalingLog
 from controller.plugins.scheduler.default.plugin import DefaultScheduler
 from controller.plugins.scheduler.pid.plugin import PidScheduler
+from controller.plugins.scheduler.pid_scripted.plugin import PidScripted
 from controller.plugins.metric_source.builder import MetricSourceBuilder
 from controller.plugins.actuator.builder import ActuatorBuilder
 
@@ -56,6 +57,9 @@ class KubeJobs:
 
         elif strategy == "pid":
             return PidScheduler(parameters)
+
+        elif strategy == "scripted":
+            return PidScripted(parameters)
 
     def setup_actuator(self, parameters):
         actuator = parameters.get('actuator')
