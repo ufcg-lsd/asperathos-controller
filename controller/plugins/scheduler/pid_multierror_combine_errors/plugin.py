@@ -99,6 +99,10 @@ class PidSchedulerMultiErrorCombineErrors(SchedulerBase):
                         (self.proportional_gain, self.derivative_gain, self.integral_gain,
                          self.alpha, self.correction_factor))
 
+        if data["reset"]:
+            self.integrated_error = 0
+            self.last_error = None
+
     def validate(self, data):
 
         data_model = {

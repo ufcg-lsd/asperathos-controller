@@ -139,4 +139,6 @@ class MultiErrorKubeJobs:
         return self.last_action
 
     def update_parameters(self, data):
+        if data["replicas"] != -1:
+            self.actuator.adjust_resources(data["replicas"])
         self.scheduler.update_gains(data)

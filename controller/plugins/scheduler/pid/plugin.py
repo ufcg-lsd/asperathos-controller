@@ -89,6 +89,10 @@ class PidScheduler(SchedulerBase):
                                                                        self.derivative_gain,
                                                                        self.integral_gain))
 
+        if data["reset"]:
+            self.integrated_error = 0
+            self.last_error = None
+
     def validate(self, data):
 
         data_model = {
