@@ -99,3 +99,15 @@ def controller_status():
             status += "\n"
 
     return status
+
+
+def update_parameters(app_id, data):
+    if app_id in scaled_apps:
+        plugin_key = data["plugin"]
+        API_LOG.log("Updating parameters for application id: %s and plugin: %s" % (app_id, plugin_key))
+
+        executor = scaled_apps[app_id][plugin_key]
+        executor.update_parameters(data)
+
+    else:
+        raise ex.BadRequestException()

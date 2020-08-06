@@ -67,3 +67,13 @@ def stop_scaling(app_id, data):
 @rest.get('/scaling')
 def controller_status():
     return u.render(api.controller_status())
+
+
+""" Change controller parameters.
+
+    Normal response codes: 200
+    Error response codes: 400
+"""
+@rest.post('/update_parameters/<app_id>', 204)
+def update_parameters(app_id, data):
+    return u.render(api.update_parameters(app_id, data))

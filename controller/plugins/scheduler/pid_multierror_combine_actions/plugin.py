@@ -41,15 +41,24 @@ class PidSchedulerMultiErrorCombineActions(SchedulerBase):
     def _pid_1(self, error):
         proportional_component = -1 * error * self.proportional_gain1
 
+        self.logger.log('pid_info_1|proportional_component:%f' %
+                        proportional_component)
+
         if self.last_error1 is None:
             derivative_component = 0
         else:
             derivative_component = -1 * self.derivative_gain1 * \
                                    (error - self.last_error1)
 
+        self.logger.log('pid_info_1|derivative_component:%f' %
+                        derivative_component)
+
         self.integrated_error1 += error
 
         integrative_component = -1 * self.integrated_error1 * self.integral_gain1
+
+        self.logger.log('pid_info_1|integral_component:%f' %
+                        integrative_component)
 
         calculated_action = \
             proportional_component + derivative_component + integrative_component
@@ -61,15 +70,24 @@ class PidSchedulerMultiErrorCombineActions(SchedulerBase):
     def _pid_2(self, error):
         proportional_component = -1 * error * self.proportional_gain2
 
+        self.logger.log('pid_info_2|proportional_component:%f' %
+                        proportional_component)
+
         if self.last_error2 is None:
             derivative_component = 0
         else:
             derivative_component = -1 * self.derivative_gain2 * \
                                    (error - self.last_error2)
 
+        self.logger.log('pid_info_2|derivative_component:%f' %
+                        derivative_component)
+
         self.integrated_error2 += error
 
         integrative_component = -1 * self.integrated_error2 * self.integral_gain2
+
+        self.logger.log('pid_info_2|integral_component:%f' %
+                        integrative_component)
 
         calculated_action = \
             proportional_component + derivative_component + integrative_component
@@ -108,6 +126,20 @@ class PidSchedulerMultiErrorCombineActions(SchedulerBase):
         new_rep = max(min(total_rep, self.max_rep), self.min_rep)
 
         return new_rep
+
+    def update_gains(self, data):
+        self.proportional_gain1 = data["proportional_gain1"]
+        self.derivative_gain1 = data["derivative_gain1"]
+        self.integral_gain1 = data["integral_gain1"]
+        self.proportional_gain2 = data["proportional_gain2"]
+        self.derivative_gain2 = data["derivative_gain2"]
+        self.integral_gain2 = data["integral_gain2"]
+        self.alpha = data["alpha"]
+
+        self.logger.log("Updated scheduler gains:p1(%f)-d1(%f)-i1(%f)-p2(%f)-d2(%f)-i2(%f)-alpha(%f)" %
+                        (self.proportional_gain1, self.derivative_gain1, self.integral_gain1,
+                         self.proportional_gain2, self.derivative_gain2, self.integral_gain2,
+                         self.alpha))
 
     def validate(self, data):
 

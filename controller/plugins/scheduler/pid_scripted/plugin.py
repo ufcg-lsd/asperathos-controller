@@ -20,6 +20,9 @@ class PidScripted(SchedulerBase):
 
         return next_replicas
 
+    def update_gains(self, data):
+        self.logger.log("Update gains is not supported by PIDScripted")
+
     def validate(self, data):
 
         data_model = {

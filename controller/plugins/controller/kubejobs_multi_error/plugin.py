@@ -72,6 +72,11 @@ class KubejobsMultiErrorController(Controller):
     def status(self):
         return self.alarm.status()
 
+    def update_parameters(self, data):
+        with self.running_lock:
+            self.logger.log("Updating controller parameters")
+            self.alarm.update_parameters(data)
+
     def validate(self, data):
         data_model = {
             "actuator": six.string_types,

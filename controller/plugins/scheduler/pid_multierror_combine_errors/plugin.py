@@ -56,18 +56,30 @@ class PidSchedulerMultiErrorCombineErrors(SchedulerBase):
 
         proportional_component = -1 * final_error * self.proportional_gain
 
+        self.logger.log('pid_info|proportional_component:%f' %
+                        proportional_component)
+
         if self.last_error is None:
             derivative_component = 0
         else:
             derivative_component = -1 * self.derivative_gain * \
                 (final_error - self.last_error)
 
+        self.logger.log('pid_info|derivative_component:%f' %
+                        derivative_component)
+
         self.integrated_error += final_error
 
         integrative_component = -1 * self.integrated_error * self.integral_gain
 
+        self.logger.log('pid_info|integral_component:%f' %
+                        integrative_component)
+
         calculated_action = int(proportional_component +
                                 derivative_component + integrative_component)
+
+        self.logger.log('pid_info|calculated_action:%d' %
+                        calculated_action)
 
         total_rep = replicas + calculated_action
 
@@ -76,6 +88,16 @@ class PidSchedulerMultiErrorCombineErrors(SchedulerBase):
         self.last_error = final_error
 
         return new_rep
+
+    def update_gains(self, data):
+        self.proportional_gain = data["proportional_gain"]
+        self.derivative_gain = data["derivative_gain"]
+        self.integral_gain = data["integral_gain"]
+        self.alpha = data["alpha"]
+        self.correction_factor = data["correction_factor"]
+        self.logger.log("Updated scheduler gains:p(%f)-d(%f)-i(%f)-alpha(%f)-correction(%f)" %
+                        (self.proportional_gain, self.derivative_gain, self.integral_gain,
+                         self.alpha, self.correction_factor))
 
     def validate(self, data):
 

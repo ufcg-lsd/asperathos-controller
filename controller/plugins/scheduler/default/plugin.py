@@ -42,6 +42,9 @@ class DefaultScheduler(SchedulerBase):
 
         return new_replicas
 
+    def update_gains(self, data):
+        self.logger.log("Update gain is not supported by default scheduler")
+
     def validate(self, data):
         data_model = {
             "actuation_size": int,
