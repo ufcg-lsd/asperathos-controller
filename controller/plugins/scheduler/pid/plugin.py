@@ -16,7 +16,7 @@
 from controller.utils.logger import ScalingLog
 from controller.plugins.scheduler.base import SchedulerBase
 from controller.exceptions import api as ex
-
+import time
 
 class PidScheduler(SchedulerBase):
 
@@ -29,41 +29,64 @@ class PidScheduler(SchedulerBase):
         self.proportional_gain = heuristic_options["proportional_gain"]
         self.derivative_gain = heuristic_options["derivative_gain"]
         self.integral_gain = heuristic_options["integral_gain"]
-        self.last_error = None
-        self.integrated_error = 0
+        self.last_error = 0.0
+        self.integrated_error = 0.0
+        self.last_timestamp = 0
 
     def scale(self, info):
         """
             Calculates the new cap value using a PID algorithm.
 
             The new rep expression is:
-            new rep = old rep
-                      - proportional_gain * error
-                      - derivative_gain * (error difference)
-                      - integral_gain * (integrated_error)
+            new rep = proportional_gain * error
+                      + derivative_gain * (error difference) / dt
+                      + integral_gain * (integrated_error) * dt
         """
 
+        time_now = time.time()
+        
+        # Default value = 2
+        # TODO: get check_period from JSON
+        dt = 2
+
+        if self.last_timestamp != 0:
+            dt = time_now - self.last_timestamp
+
+        self.last_timestamp = time_now
+
         error = info.get('progress_error')
-        replicas = info.get('last_replicas')
 
-        proportional_component = -1 * error * self.proportional_gain
+        proportional_action = self.proportional_gain * error
 
-        if self.last_error is None:
-            derivative_component = 0
-        else:
-            derivative_component = -1 * self.derivative_gain * \
-                (error - self.last_error)
+        derivative_action = 0.0
+        if self.last_error != 0:
+            derivative_action = self.derivative_gain * \
+                (error - self.last_error) / dt
 
-        self.integrated_error += error
+        self.integrated_error += error * dt
+        integral_action = self.integral_gain * self.integrated_error
 
-        integrative_component = -1 * self.integrated_error * self.integral_gain
+        control_action = int(proportional_action +
+                                derivative_action + integral_action)
 
-        calculated_action = int(proportional_component +
-                                derivative_component + integrative_component)
-
-        total_rep = replicas + calculated_action
+        # Asperathos fashion of computing the error
+        # requires the multiplication by (-1) to adjust
+        # the topology for better suit Control Theory implementation
+        # of feedback control
+        
+        control_action *= -1
+        total_rep = control_action
 
         new_rep = max(min(total_rep, self.max_rep), self.min_rep)
+
+        log_str = f"\n"
+        log_str += f"\nCONTROL ACTION: {control_action}"
+        log_str += f"\nNEW_REP: {new_rep}"
+        log_str += f"\nP: {proportional_action}"
+        log_str += f"\nI: {integral_action}"
+        log_str += f"\nD: {derivative_action}"
+        
+        self.logger.log(log_str)
 
         self.last_error = error
 
